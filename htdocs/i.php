@@ -1,0 +1,881 @@
+<?php
+// index.php
+require_once 'db.php';
+
+// Fetch featured products by brand
+$brands = ['Nike', 'Adidas', 'Puma', 'Jordan', 'Newbalance', 'Timberland'];
+$featuredProducts = [];
+
+foreach ($brands as $brand) {
+    $stmt = $conn->prepare("SELECT * FROM products WHERE category = ? ORDER BY RAND() LIMIT 10");
+    $stmt->bind_param("s", $brand);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $featuredProducts[$brand] = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+}
+
+// Check if user is logged in (simplified example)
+$isLoggedIn = isset($_SESSION['user_id']); // You'll need to implement proper session handling
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandX - Premium Sneakers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #ff5e00;
+            --light-gray: #f5f5f5;
+            --dark-gray: #333333;
+            --text: #222222;
+            --text-light: #777777;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 1rem 5%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .header-icons a {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .header-icons a:hover {
+            color: var(--accent);
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent);
+            color: var(--secondary);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1001;
+            top: 0;
+            right: 0;
+            background-color: var(--primary);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            color: var(--secondary);
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: var(--accent);
+        }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 2rem;
+            margin-left: 50px;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 80px;
+            padding: 2rem 5%;
+        }
+
+        /* Hero Banner */
+        .hero-banner {
+            width: 100%;
+            height: 500px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .hero-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: var(--secondary);
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--secondary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #e05500;
+            transform: translateY(-2px);
+        }
+
+        /* Brand Sections */
+        .brand-section {
+            margin-bottom: 4rem;
+        }
+
+        .brand-banner {
+            width: 100%;
+            height: 200px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .brand-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .brand-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-title a {
+            font-size: 1rem;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Products Grid */
+        .products-container {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) var(--light-gray);
+        }
+
+        .products-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .products-container::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 10px;
+        }
+
+        .products-container::-webkit-scrollbar-thumb {
+            background-color: var(--accent);
+            border-radius: 10px;
+        }
+
+        .product-card {
+            min-width: 220px;
+            background-color: var(--secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background-color: var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 0.6rem;
+            background-color: var(--primary);
+            color: var(--secondary);
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-to-cart:hover {
+            background-color: #222222;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--primary);
+            color: var(--secondary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            background-color: transparent;
+            color: var(--secondary);
+            border: none;
+            padding: 0.6rem 0.8rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quantity-btn:hover {
+            background-color: #222222;
+        }
+
+        .quantity-value {
+            padding: 0 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: var(--secondary);
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .modal-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 3rem 5%;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-column ul li a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--secondary);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-icons a:not(.cart-icon) {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .hero-banner {
+                height: 300px;
+            }
+
+            .hero-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .product-card {
+                min-width: 180px;
+            }
+
+            .product-image {
+                height: 160px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-banner {
+                height: 200px;
+            }
+
+            .hero-content {
+                padding: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .brand-banner {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <a href="index.php" class="logo">Brand<span>X</span></a>
+        <div class="header-icons">
+            <a href="profile.php"><i class="fas fa-user"></i></a>
+            <a href="cart.php" class="cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </a>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <a href="javascript:void(0)" class="close-btn" id="close-sidebar">&times;</a>
+        <a href="index.php">Home</a>
+        <a href="shop.php">Shop</a>
+        <a href="nike.php">Nike</a>
+        <a href="adidas.php">Adidas</a>
+        <a href="jordan.php">Jordan</a>
+        <a href="newbalance.php">New Balance</a>
+        <a href="about.php">About Us</a>
+        <a href="contact.php">Contact</a>
+        <a href="login.php">Login</a>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1925&q=80" alt="BrandX Sneakers">
+            <div class="hero-content">
+                <h1>Step Up Your Sneaker Game</h1>
+                <p>Discover the latest collection of premium sneakers from top brands. Limited editions and exclusive drops available now.</p>
+                <a href="shop.php" class="btn">Shop Now</a>
+            </div>
+        </section>
+
+        <!-- Featured Brands Sections -->
+        <?php foreach ($featuredProducts as $brand => $products): ?>
+            <?php if (!empty($products)): ?>
+                <section class="brand-section">
+                    <!-- Brand Banner -->
+                    <a href="<?php echo strtolower($brand); ?>.php" class="brand-banner">
+                        <img src="https://source.unsplash.com/random/800x200/?<?php echo strtolower($brand); ?>,sneakers" alt="<?php echo $brand; ?>">
+                    </a>
+                    
+                    <div class="section-title">
+                        <h2><?php echo $brand; ?></h2>
+                        <a href="<?php echo strtolower($brand); ?>.php">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <!-- Products Grid -->
+                    <div class="products-container">
+                        <?php foreach ($products as $product): ?>
+                            <div class="product-card" data-id="<?php echo $product['id']; ?>">
+                                <a href="product.php?id=<?php echo $product['id']; ?>">
+                                    <div class="product-image">
+                                        <img src="<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-name"><?php echo htmlspecialchars($product['name']); ?></h3>
+                                        <div class="product-price">Ksh <?php echo number_format($product['price_ksh'], 0); ?></div>
+                                    </div>
+                                </a>
+                                <?php if ($isLoggedIn): ?>
+                                    <div class="quantity-selector">
+                                        <button class="quantity-btn minus">-</button>
+                                        <span class="quantity-value">1</span>
+                                        <button class="quantity-btn plus">+</button>
+                                    </div>
+                                <?php else: ?>
+                                    <button class="add-to-cart" onclick="showLoginModal('<?php echo htmlspecialchars($product['name']); ?>')">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </main>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title">Login Required</h2>
+            <p>You need to login to add items to your cart.</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="modal-footer">
+                    <a href="register.php">Create an account</a>
+                    <button type="submit" class="btn">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle toast-icon"></i>
+        <div class="toast-message">Product added to cart successfully!</div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>BrandX</h3>
+                <p>Premium sneakers from top brands. Limited editions and exclusive drops.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Shop</h3>
+                <ul>
+                    <li><a href="nike.php">Nike</a></li>
+                    <li><a href="adidas.php">Adidas</a></li>
+                    <li><a href="jordan.php">Jordan</a></li>
+                    <li><a href="newbalance.php">New Balance</a></li>
+                    <li><a href="puma.php">Puma</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Help</h3>
+                <ul>
+                    <li><a href="contact.php">Contact Us</a></li>
+                    <li><a href="faq.php">FAQs</a></li>
+                    <li><a href="shipping.php">Shipping & Returns</a></li>
+                    <li><a href="size-guide.php">Size Guide</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="about.php">Our Story</a></li>
+                    <li><a href="blog.php">Blog</a></li>
+                    <li><a href="careers.php">Careers</a></li>
+                    <li><a href="privacy.php">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; <?php echo date('Y'); ?> BrandX. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sidebar Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('close-sidebar');
+
+        hamburger.addEventListener('click', () => {
+            sidebar.style.width = '250px';
+        });
+
+        closeSidebar.addEventListener('click', () => {
+            sidebar.style.width = '0';
+        });
+
+        // Modal Functions
+        function showLoginModal(productName) {
+            const modal = document.getElementById('loginModal');
+            const modalTitle = modal.querySelector('.modal-title');
+            modalTitle.textContent = `Login to Add ${productName}`;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = toast.querySelector('.toast-message');
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add to Cart Functionality
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                if (!<?php echo $isLoggedIn ? 'true' : 'false'; ?>) {
+                    const productName = this.closest('.product-card').querySelector('.product-name').textContent;
+                    showLoginModal(productName);
+                    return;
+                }
+                
+                const productId = this.closest('.product-card').dataset.id;
+                addToCart(productId, 1);
+            });
+        });
+
+        // Quantity Selector
+        document.querySelectorAll('.quantity-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const selector = this.closest('.quantity-selector');
+                const valueElement = selector.querySelector('.quantity-value');
+                let value = parseInt(valueElement.textContent);
+                
+                if (this.classList.contains('minus') && value > 1) {
+                    value--;
+                } else if (this.classList.contains('plus')) {
+                    value++;
+                }
+                
+                valueElement.textContent = value;
+                
+                // Update cart with new quantity
+                const productId = this.closest('.product-card').dataset.id;
+                updateCart(productId, value);
+            });
+        });
+
+        // Simulated cart functions (replace with actual API calls)
+        function addToCart(productId, quantity) {
+            // In a real implementation, you would make an AJAX call to your server
+            console.log(`Added product ${productId} to cart with quantity ${quantity}`);
+            updateCartCount(1); // Increment cart count
+            showToast('Product added to cart successfully!');
+        }
+
+        function updateCart(productId, quantity) {
+            // In a real implementation, you would make an AJAX call to your server
+            console.log(`Updated product ${productId} quantity to ${quantity}`);
+            showToast('Cart updated successfully!');
+        }
+
+        function updateCartCount(change) {
+            const cartCount = document.querySelector('.cart-count');
+            let count = parseInt(cartCount.textContent) || 0;
+            count += change;
+            cartCount.textContent = count;
+            cartCount.style.display = count > 0 ? 'flex' : 'none';
+        }
+
+        // Initialize cart count (in a real app, this would come from the server)
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartCount(0); // Initialize with 0
+        });
+    </script>
+</body>
+</html>

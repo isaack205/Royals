@@ -1,0 +1,295 @@
+<?php
+session_start();
+include('db.php');  // Database connection
+
+// Ensure the user is logged in before allowing access to the checkout page
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");  // Redirect to login page if not logged in
+    exit;
+}
+// Include the authentication handler
+include('auth.php');
+
+// Check if the user is logged in via cookie
+$user_data = checkAuth();
+
+// Fetch the logged-in user's information from the database
+$userId = $_SESSION['user_id'];  // Get the user_id from the session
+
+// Query to get user details from the customers table
+$userQuery = "SELECT name, email FROM customers WHERE id = '$userId'";  
+$userResult = $connection->query($userQuery);
+
+// Initialize variables for user info
+$userName = "";
+$userEmail = "";
+
+// Check if the user exists and fetch their name and email
+if ($userResult && $userResult->num_rows > 0) {
+    $user = $userResult->fetch_assoc();
+    $userName = $user['name'];
+    $userEmail = $user['email'];
+}
+
+// Ensure the cart is not empty before proceeding to checkout
+if (empty($_SESSION['cart'])) {
+    header("Location: cart.php");  // Redirect to cart if no items in the cart
+    exit;
+}
+
+// Handle the order submission after form is posted
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['checkout'])) {
+    // Sanitize and validate user details
+    $name = mysqli_real_escape_string($connection, $_POST['name']);
+    $email = mysqli_real_escape_string($connection, $_POST['email']);
+    $phone = mysqli_real_escape_string($connection, $_POST['phone']);
+    $location = mysqli_real_escape_string($connection, $_POST['location']);
+
+    // Initialize total price and prepare for product info
+    $totalPrice = 0;
+    $orderProducts = [];
+    $productIds = $_POST['product_id'];  // Array of product IDs passed from the form
+    $quantities = $_POST['product_quantity'];  // Array of quantities
+    $colors = $_POST['product_color'];  // Array of colors
+    $sizes = $_POST['product_size'];  // Array of sizes
+    $productNames = [];  // Initialize array to hold product names
+
+    // Arrays to hold concatenated colors and sizes
+    $allColors = [];
+    $allSizes = [];
+
+    // Iterate through each product in the cart
+    for ($i = 0; $i < count($productIds); $i++) {
+        $productId = $productIds[$i];
+        $quantity = $quantities[$i];
+        $color = $colors[$i];
+        $size = $sizes[$i];
+
+        // Get the product details (name and price)
+        $sql = "SELECT price_ksh, name FROM products WHERE id = $productId";
+        $result = $connection->query($sql);
+        if ($result->num_rows > 0) {
+            $product = $result->fetch_assoc();
+            $totalPrice += $product['price_ksh'] * $quantity;
+            $productNames[] = $product['name'];  // Store the product name
+
+            // Add color and size to arrays
+            $allColors[] = $color;
+            $allSizes[] = $size;
+
+            // Add the product details to the orderProducts array
+            $orderProducts[] = [
+                'product_id' => $productId,
+                'quantity' => $quantity,
+                'price' => $product['price_ksh'],
+                'name' => $product['name'],
+                'color' => $color,
+                'size' => $size
+            ];
+        }
+    }
+
+    // Concatenate all product names, colors, and sizes into comma-separated strings
+    $productNamesString = implode(", ", $productNames);
+    $allColorsString = implode(", ", $allColors);
+    $allSizesString = implode(", ", $allSizes);
+
+    // Insert the order into the orders_made table
+    $orderQuery = "INSERT INTO orders_made (name, email, phone, location, total_price, product_color, product_size, product_names, order_date) 
+                   VALUES ('$name', '$email', '$phone', '$location', '$totalPrice', '$allColorsString', '$allSizesString', '$productNamesString', NOW())";
+    
+    if ($connection->query($orderQuery)) {
+        $orderId = $connection->insert_id;  // Get the ID of the inserted order
+
+        // Insert products into the order_details table
+        foreach ($orderProducts as $product) {
+            $orderDetailsQuery = "INSERT INTO order_details (order_id, product_id, quantity, price) 
+                                  VALUES ('$orderId', '{$product['product_id']}', '{$product['quantity']}', '{$product['price']}')";
+            $connection->query($orderDetailsQuery);  // Add each product in the cart
+        }
+
+        // Clear the cart from both session and database
+        unset($_SESSION['cart']);  // Clear the cart in the session
+
+        // Also, clear the cart from the database for the current user
+        $clearCartQuery = "DELETE FROM cart WHERE user_id = '$userId'";  
+        $connection->query($clearCartQuery);
+
+        // Set session variable for order ID and redirect to order confirmation page
+        $_SESSION['order_id'] = $orderId;
+        $_SESSION['order_success'] = "Your order has been placed successfully!";
+            
+            
+            
+
+        // Redirect to the order confirmation page
+        header("Location: order_confirmation.php");
+        exit;
+    } else {
+        $_SESSION['order_error'] = "There was an error placing your order. Please try again.";
+        header("Location: checkout.php");  // Redirect to the checkout page in case of an error
+        exit;
+    }
+}
+
+// Get product details for display (will be hidden)
+$cartProducts = [];
+$totalPrice = 0;
+if (!empty($_SESSION['cart'])) {
+    foreach ($_SESSION['cart'] as $cartItem) {
+        $productId = $cartItem['product_id'];
+        $color = $cartItem['color'];
+        $size = $cartItem['size'];
+        $quantity = $cartItem['quantity'];
+
+        $sql = "SELECT * FROM products WHERE id = $productId";
+        $result = $connection->query($sql);
+        if ($result->num_rows > 0) {
+            $product = $result->fetch_assoc();
+            $totalPrice += $product['price_ksh'] * $quantity;
+            $cartProducts[] = [
+                'product' => $product,
+                'quantity' => $quantity,
+                'color' => $color,
+                'size' => $size
+            ];
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0d1117;
+            color: #c9d1d9;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            position: relative;
+            padding: 1rem;
+            background-color: #161b22;
+        }
+
+        .checkout-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #4ea8de;
+            border-radius: 6px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .checkout-form label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        .checkout-form input, .checkout-form textarea {
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #0d1117;
+            border: 1px solid  #4ea8de;
+            color: #c9d1d9;
+            width: 100%;
+        }
+
+        .checkout-form button {
+            background-color: #4ea8de;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .checkout-form button:hover {
+            background:none;
+            border: 1px solid rgb(4, 201, 250);
+            color:  #4ea8de;
+        }
+
+        .success-message,
+        .error-message {
+            color: green;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .product-details {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Checkout</h1>
+</header>
+
+<div class="checkout-container">
+    <?php if (isset($_SESSION['order_success'])): ?>
+        <div class="success-message">
+            <?php echo $_SESSION['order_success']; unset($_SESSION['order_success']); ?>
+        </div>
+    <?php elseif (isset($_SESSION['order_error'])): ?>
+        <div class="error-message">
+            <?php echo $_SESSION['order_error']; unset($_SESSION['order_error']); ?>
+        </div>
+    <?php endif; ?>
+
+    <form action="checkout.php" method="POST" class="checkout-form">
+    <h2>Enter your details</h2>
+
+    <!-- User's details inputs -->
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userName); ?>" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userEmail); ?>" required readonly>
+
+    <label for="phone">Phone Number</label>
+    <input type="text" id="phone" name="phone" required>
+
+    <label for="location">Shipping Address</label>
+    <textarea id="location" name="location" rows="4" required></textarea>
+
+    <!-- Hidden fields for cart details -->
+    <?php foreach ($cartProducts as $product): ?>
+        <input type="hidden" name="product_id[]" value="<?php echo $product['product']['id']; ?>">
+        <input type="hidden" name="product_color[]" value="<?php echo $product['color']; ?>">
+        <input type="hidden" name="product_size[]" value="<?php echo $product['size']; ?>">
+        <input type="hidden" name="product_quantity[]" value="<?php echo $product['quantity']; ?>">
+    <?php endforeach; ?>
+
+    <button type="submit" name="checkout">Place Order</button>
+</form>
+
+</div>
+
+</body>
+</html>

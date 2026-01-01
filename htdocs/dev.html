@@ -1,0 +1,591 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="images/jpg" href="favicon.jpg">
+    <meta charset="UTF-8">
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Primary Meta Tags -->
+    <meta name="keywords" content="Simon Ngugi, Web Developer Kenya, PHP Developer Nairobi, Website Developer Kenya, Aksa Genset Developer, Full Stack Developer Kenya">
+    <meta name="description" content="Simon Ngugi - The developer behind Aksa Genset Services website. Professional web developer based in Kenya specializing in PHP, JavaScript, and responsive web design.">
+    <meta name="author" content="Simon Ngugi">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="geo.region" content="KE">
+    <meta name="geo.placename" content="Nairobi">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Simon Ngugi | Web Developer for Aksa Genset Services">
+    <meta property="og:description" content="Professional web developer behind Aksa Genset Services website. Based in Nairobi, Kenya.">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Simon Ngugi - Web Developer">
+    <meta name="twitter:description" content="The developer of Aksa Genset Services website. Specializing in responsive web design and development.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About the Developer | Simon Ngugi - Aksa Genset Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --black: #0a192f;
+            --white: #FFFFFF;
+            --accent: #FF8C00;
+            --gray: #222222;
+            --light-gray: #f5f5f5;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.7;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: var(--black);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        .nav-menu li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-menu li a:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+        
+        .nav-menu li a:hover {
+            color: var(--accent);
+        }
+        
+        .nav-menu li a:hover:after {
+            width: 100%;
+        }
+        
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+        
+        /* Developer Content Styles */
+        .developer-container {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+        
+        .developer-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .developer-header h1 {
+            font-size: 2.5rem;
+            color: var(--black);
+            margin-bottom: 15px;
+        }
+        
+        .developer-header:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--accent);
+        }
+        
+        .developer-profile {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 50px;
+            align-items: center;
+        }
+        
+        .developer-photo {
+            flex: 1;
+            max-width: 300px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .developer-photo img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .developer-info {
+            flex: 2;
+        }
+        
+        .developer-info h2 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .developer-info p {
+            margin-bottom: 15px;
+        }
+        
+        .developer-skills {
+            margin-top: 20px;
+        }
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .skill-tag {
+            background: var(--light-gray);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--black);
+        }
+        
+        .developer-contact {
+            background: var(--light-gray);
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 40px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-size: 1.2rem;
+        }
+        
+        .contact-details h4 {
+            margin-bottom: 5px;
+            color: var(--black);
+        }
+        
+        .contact-details a {
+            color: var(--black);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .contact-details a:hover {
+            color: var(--accent);
+        }
+        
+        .developer-work {
+            margin-top: 60px;
+        }
+        
+        .project-card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .project-card h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .project-links {
+            margin-top: 15px;
+        }
+        
+        .project-link {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--black);
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-right: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .project-link:hover {
+            background: var(--black);
+            color: var(--accent);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 50px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-logo img {
+            height: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .footer-logo p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links h3, 
+        .social-links h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .social-links a {
+            display: inline-block;
+            color: var(--white);
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                background: var(--black);
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 0;
+                transition: left 0.3s;
+            }
+            
+            .nav-menu.active {
+                left: 0;
+            }
+            
+            .menu-toggle.active span:nth-child(1) {
+                transform: translateY(6px) rotate(45deg);
+            }
+            
+            .menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .menu-toggle.active span:nth-child(3) {
+                transform: translateY(-6px) rotate(-45deg);
+            }
+            
+            .developer-header h1 {
+                font-size: 2rem;
+            }
+            
+            .developer-profile {
+                flex-direction: column;
+            }
+            
+            .developer-photo {
+                max-width: 100%;
+            }
+            
+            .contact-methods {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .social-links {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="developer-container">
+        <div class="developer-header">
+            <h1>About the Developer</h1>
+            <p>The professional behind Aksa Genset Services website</p>
+        </div>
+        
+        <div class="developer-profile">
+            <div class="developer-photo">
+                <img src="uploads/simon-ngugi.jpg" alt="Simon Ngugi - Web Developer">
+            </div>
+            
+            <div class="developer-info">
+                <h2>Simon Ngugi</h2>
+                <p>Full-stack web developer based in Nairobi, Kenya with over 5 years of experience in building responsive, user-friendly websites and web applications.</p>
+                <p>I specialize in PHP, JavaScript, MySQL, and modern front-end frameworks. My focus is on creating websites that not only look great but also deliver exceptional user experiences and measurable business results.</p>
+                
+                <div class="developer-skills">
+                    <h3>Technical Skills</h3>
+                    <div class="skills-list">
+                        <span class="skill-tag">PHP</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">HTML5</span>
+                        <span class="skill-tag">CSS3</span>
+                        <span class="skill-tag">jQuery</span>
+                        <span class="skill-tag">Bootstrap</span>
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">Responsive Design</span>
+                        <span class="skill-tag">UI/UX</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="developer-contact">
+            <h3>Contact Information</h3>
+            <p>Available for freelance projects, website development, and consultations. Feel free to reach out through any of these channels:</p>
+            
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Phone</h4>
+                        <a href="tel:+254768924330">+254 768 924330</a><br>
+                        <a href="tel:+254777992666">+254 777 992666</a>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>WhatsApp</h4>
+                        <a href="https://wa.me/254773743248" target="_blank">+254 773 743248</a>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Email</h4>
+                        <a href="mailto:sngugi175@gmail.com">sngugi175@gmail.com</a>
+                    </div>
+                </div>
+                
+                <div class="contact-method">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h4>Location</h4>
+                        <span>Nairobi, Kenya</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="developer-work">
+            <h2>My Work on Aksa Genset Services</h2>
+            
+            <div class="project-card">
+                <h3>Aksa Genset Services Website</h3>
+                <p>Developed a complete e-commerce and service website for Aksa Genset Services, featuring product listings, service pages, customer reviews, and an admin dashboard.</p>
+                <p>Key features implemented include:</p>
+                <ul style="margin: 15px 0 15px 20px;">
+                    <li>Responsive design for all devices</li>
+                    <li>Product catalog with filtering options</li>
+                    <li>Shopping cart functionality</li>
+                    <li>Customer testimonial system</li>
+                    <li>Admin dashboard for content management</li>
+                    <li>Secure user authentication</li>
+                </ul>
+                
+                <div class="project-links">
+                    <a href="index.php" class="project-link">
+                        <i class="fas fa-external-link-alt"></i> Visit Website
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <h3>Testimonial from Aksa Genset</h3>
+                <blockquote style="font-style: italic; margin: 15px 0; padding-left: 15px; border-left: 3px solid var(--accent);">
+                    "Simon did an excellent job developing our website. He was professional, met all deadlines, and delivered a site that perfectly represents our business. The site has significantly improved our online presence and customer engagement."
+                </blockquote>
+                <p>- Aksa Genset Services Management</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Simon Ngugi",
+      "jobTitle": "Web Developer",
+      "url": "https://aksagensetservices.co.ke/developer.php",
+      "sameAs": [],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nairobi",
+        "addressRegion": "Nairobi",
+        "addressCountry": "Kenya"
+      },
+      "email": "mailto:sngugi175@gmail.com",
+      "telephone": "+254768924330"
+    }
+    </script>
+</body>
+</html>

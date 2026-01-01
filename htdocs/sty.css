@@ -1,0 +1,446 @@
+/* General page styling */
+body {
+     font-family: 'Exo', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117; /* Replaced with dark background */
+    color: #c9d1d9; /* Updated text color */
+}
+
+
+/* Main Title and Description */
+h1 {
+    text-align: center;
+    font-size: 36px;
+    color: #4ea8de; /* Updated main heading color */
+    font-family: 'Times New Roman', Times, serif;
+}
+
+h2 {
+    text-align: center;
+    font-size: 24px;
+    color: rgb(255, 255, 255); /* Orange color for subheading */
+}
+/* Off-Screen Menu Styles */
+.off-screen-menu {
+    background: #0d1117; /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Blurred background effect */
+    color: rgb(248, 245, 245);
+    height: 100vh;
+    width: 250px; /* Menu width */
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    right: -250px; /* Initially off-screen */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.5rem;
+    transition: right 0.3s ease; /* Smooth slide-in effect */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2); /* Slight shadow for depth */
+}
+
+/* When the menu is active (slid in) */
+.off-screen-menu.active {
+    right: 0; /* Slide the menu into view */
+}
+
+.off-screen-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.off-screen-menu li {
+    margin: 20px 0;
+    display: block;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+.off-screen-menu a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+/* Hamburger Menu Styles */
+.ham-menu {
+    height: 50px;
+    width: 50px;
+    margin-left: auto;
+    position: relative;
+    cursor: pointer;
+    z-index: 1000; /* Ensures it stays on top */
+}
+
+.ham-menu span {
+    height: 5px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 25px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.ham-menu span:nth-child(1) {
+    top: 25%;
+}
+
+.ham-menu span:nth-child(2) {
+    top: 50%;
+}
+
+.ham-menu span:nth-child(3) {
+    top: 75%;
+}
+
+/* When the hamburger menu is active */
+.ham-menu.active span:nth-child(1) {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg); /* Rotate the top bar */
+}
+
+.ham-menu.active span:nth-child(2) {
+    opacity: 0; /* Hide the middle bar */
+}
+
+.ham-menu.active span:nth-child(3) {
+    top: 50%;
+    transform: translate(-50%, 50%) rotate(-45deg); /* Rotate the bottom bar */
+}
+
+/* Make sure the header/nav is positioned correctly */
+nav {
+    padding: 1rem;
+    background-color: #444;
+    position: relative;
+}
+
+
+/* Categories Section */
+.categories {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.categories a {
+    background-color: #4ea8de; /* Orange background */
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.categories a:hover {
+    background-color: #0d0d0e; /* Purple hover effect */
+}
+
+/* Product Container */
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns on large screens */
+    gap: 20px; /* Gap between products */
+    padding: 20px;
+    justify-items: center;
+}
+
+/* Product Card */
+.product {
+    background-color: #161b22; /* Dark background for product */
+    border: 1px solid #30363d; /* Subtle border */
+    border-radius: 6px;
+    overflow: hidden;
+    padding: 1px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease; /* Hover effect */
+}
+
+.product:hover {
+    transform: translateY(-10px); /* Elevated hover effect */
+}
+
+/* Product Image */
+.product-image {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    max-height: 300px;
+}
+
+/* Product Title */
+.product h3 {
+    font-size: 20px;
+    color: #4ea8de; /* Blue for title */
+    margin: 10px 0;
+}
+
+/* Product Price */
+.product p {
+    font-size: 16px;
+    color: #8b949e; /* Lighter color for product description */
+    line-height: 1.5;
+}
+
+.product p strong {
+    color: #ff6600; /* Orange for emphasis */
+}
+
+/* Add to Cart Button */
+.product .add-to-cart {
+    border: 1px solid rgb(179, 0, 0);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.product .add-to-cart:hover {
+    background-color: #ff6600; /* Orange hover effect */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .product-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .product-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for smaller screens */
+    }
+
+    .categories {
+        flex-direction: column;
+        margin-top: 20px;
+    }
+
+    .categories a {
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    .product-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+        gap: 20px; /* Maintain gap between products */
+    }
+}
+
+  
+  /* Products Section */
+  .products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+    gap: 20px;
+  }
+  
+  .product-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    width: calc(50% - 20px);
+    padding: 10px;
+    text-align: center;
+    color: #c9d1d9;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px); /* Add hover effect */
+  }
+  
+  .product-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  .product-card h3 {
+    margin: 10px 0;
+    color: #4ea8de;
+  }
+  
+  .product-card p {
+    margin: 10px 0;
+    color: #8b949e;
+  }
+  
+  .product-card button {
+    background-color: #238636;
+    border: none;
+    padding: 8px;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  /* Banner */
+  .banner {
+    background: linear-gradient(to right, darkblue, darkgreen);
+    color: #fff;
+    text-align: center;
+    padding: 50px 20px;
+  }
+  
+  .banner h2 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    font-family: cursive;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.logo img,
+
+.off-screen-menu .menu-logo img {
+
+    background: transparent; /* Ensure transparency */
+
+    display: block;
+
+    margin: 0 auto; /* Center horizontally */
+
+}
+
+/* Center the Header Logo */
+.logo img,
+.off-screen-menu .menu-logo img {
+    background: transparent; /* Ensure transparency */
+    display: block;
+    margin: 0 auto; /* Center horizontally */
+}
+
+/* Center the Header Logo */
+.navlogo {
+    text-align: center; /* Center the container */
+    padding: 10px 0;
+}
+
+.navlogo img {
+    height: 70px; /* Adjust size as needed */
+    width: auto;
+}
+
+/* Logo container */
+.logo {
+  text-align: center; /* Center the container */
+  padding: 0; /* Remove padding */
+  position: absolute; /* Position it at the top of the header */
+  top: 0; /* Align it to the top */
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Adjust the position to truly center it */
+}
+
+/* Logo image styling */
+.logo img {
+  height: 70px; /* Adjust size as needed */
+  width: auto; /* Maintain aspect ratio */
+}
+
+
+
+/* Center the Menu Logo */
+
+.off-screen-menu .menu-logo {
+
+    text-align: center; /* Center the container */
+
+    margin: 20px 0;
+
+}
+
+.off-screen-menu .menu-logo img {
+
+    height: 60px; /* Adjust size as needed */
+
+    width: auto;
+
+}
+
+

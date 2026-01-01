@@ -1,0 +1,264 @@
+/* General page styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0d1117; /* Dark background */
+    color: #c9d1d9; /* Text color */
+}
+
+/* Header and Navigation */
+header {
+    background-color: #161b22; /* Dark background */
+    color: #c9d1d9; /* Text color */
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+header nav ul li a {
+    color: #c9d1d9;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: color 0.3s ease;
+}
+
+header nav ul li a:hover {
+    color: #ff6600; /* Hover effect */
+}
+
+/* Main Title and Description */
+h1 {
+    text-align: center;
+    font-size: 38px;
+    color: #4ea8de; /* Blue for the main heading */
+    margin-top: 50px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #ff6600; /* Orange for subheading */
+    margin-bottom: 30px;
+}
+       }
+            
+/* Product Title */
+. h2 {
+    font-size: 15px;
+    color: #4ea8de; /* Blue for title */
+    margin: 10px 0;
+        font-family:Times New Roman;
+}
+
+/* Product Price */
+.product p {
+    font-size: 14px;
+    color: #8b949e; /* Lighter color for product description */
+    line-height: 1.5;
+}
+
+.product p strong {
+    color: #ff6600; /* Orange for emphasis */
+}
+
+
+/* Product Details Layout */
+.product-details {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    justify-content: space-between; /* Ensure space between the image and text */
+    align-items: flex-start; /* Align items to the top of the container */
+    padding: 20px;
+    gap: 20px; /* Space between the image and text */
+}
+
+.product-details .product-image {
+    flex: 0 0 40%; /* Image takes 40% of the space on larger screens */
+    max-width: 40%;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.product-details .product-info {
+    flex: 0 0 55%; /* Text takes 55% of the space */
+    max-width: 55%;
+    padding: 20px;
+}
+
+.product-details h1 {
+    font-size: 2rem;
+    color: #4ea8de;
+    margin-bottom: 15px;
+}
+
+
+ .footer-icons {
+  display: flex;
+  justify-content: center; /* Center the icons closer to each other */
+  align-items: center;
+  gap: 50px; /* Adjust this gap to control the distance between the icons */
+  width: 100%;
+  max-width: 400px; /* Optional: adjust this width if necessary */
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.footer-icons img {
+  width: 50px; /* Adjust the size of the icons if needed */
+  height: auto;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.footer p {
+  margin: 0;
+}
+
+.footer a {
+  color: #4ea8de;
+  text-decoration: none;
+}
+.footer-icons-text p {
+  text-align: center;
+  font-size: 16px; /* Adjust font size */
+  color: #4ea8de; /* Choose a suitable color */
+  margin-bottom: 10px; /* Space between the text and icons */
+}
+
+.product-details p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #c9d1d9;
+}
+
+.product-details .price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff6600; /* Highlight the price in orange */
+    margin-top: 10px;
+}
+
+.product-details .sizes, .product-details .colors, .product-details .stock {
+    margin-top: 10px;
+}
+
+.product-details button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.product-details button:hover {
+    background-color: #388E3C;
+}
+
+/* Responsive for Mobile and Tablets */
+@media (max-width: 768px) {
+    .product-details {
+        flex-direction: column; /* Stack the image and text vertically on smaller screens */
+        align-items: center; /* Center the items */
+    }
+
+    .product-details .product-image {
+        width: 80%; /* Adjust the image size on smaller screens */
+        margin-bottom: 20px;
+    }
+
+    .product-details .product-info {
+        width: 80%; /* Adjust the text section width */
+    }
+
+    .product-details h1 {
+        font-size: 1.5rem; /* Smaller heading on mobile */
+    }
+
+    .product-details p {
+        font-size: 0.9rem; /* Smaller text on mobile */
+    }
+
+    .product-details .price {
+        font-size: 1rem; /* Adjust price size on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .product-details {
+        padding: 10px; /* Adjust padding on very small screens */
+    }
+
+    .product-details h1 {
+        font-size: 1.2rem;
+    }
+
+    .product-details p {
+        font-size: 0.85rem; /* Further reduce text size */
+    }
+
+    .product-details .price {
+        font-size: 0.9rem;
+    }
+}
+
+/* Add to Cart Button */
+button {
+    
+    color: rgb(253, 253, 253);
+    padding: 14px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer;
+    background-color: rgb(23, 145, 202);
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+}
+
+button:hover {
+    background:none; /* Orange hover color */
+    transform: scale(1.05); /* Slight zoom effect */
+    border: 1px solid rgb(1, 250, 1);
+}
+
+button:active {
+    transform: scale(1); /* Reset scale when clicked */
+}
+
+/* Footer Styling */
+footer {
+    background-color: #161b22;
+    color: #c9d1d9;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: 50px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 14px;
+}
+
