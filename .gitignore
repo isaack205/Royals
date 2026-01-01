@@ -1,0 +1,68 @@
+# Create .gitignore file
+echo "# PHP .gitignore for Windows
+
+# Dependencies
+/vendor/
+/node_modules/
+/composer.phar
+composer.lock
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Logs
+*.log
+/storage/logs/
+/logs/
+
+# Cache
+/storage/framework/cache/
+/cache/
+
+# Session files
+/storage/framework/sessions/
+
+# Backup files
+*.bak
+*.backup
+*~
+* v1
+* v2
+* backup
+* old
+* copy
+*2024
+*.php[0-9]
+*.php[0-9][0-9]
+*original*
+*draft
+* b&w
+* (1).txt
+* (2).txt
+* (1).php
+* (2).php
+
+# Uploaded files (user content)
+htdocs/uploads/
+/uploads/
+/public/uploads/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# System files
+ehthumbs.db
+*.db" > .gitignore
