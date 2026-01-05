@@ -1190,6 +1190,7 @@ $grandTotal = $subtotal + $shippingCost;
                     amount: amountInKobo,
                     currency: 'KES',
                     ref: uniqueRef,
+                    label: 'Royals',
                     metadata: {
                         customer_name: fname + ' ' + lname,
                         phone: phone,
