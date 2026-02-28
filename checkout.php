@@ -719,7 +719,7 @@ $grandTotal = $subtotal + $shippingCost;
                                 <div class="option-content">
                                     <div class="zone-info">
                                         <span class="zone-name">Nairobi Zone E</span>
-                                        <span class="zone-areas">(Riara rd, Ngong rd, Kilimani, Valley Arcade)</span>
+                                        <span class="zone-areas">(Community | KNH | Riara Rd | Ngong Rd | Kilimani | Valley Arcade | Valley Road | Adams Arcade | Hurlingham | Yaya | Dagoretti Corner | Riara(Mbagathi) | Daystar (Valley Road) | UoN (Chiromo) | PAC (citam) (All campuses in & around CBD: UoN | JKUAT | Zetech | MKU | Methodist | Daystar | KCA | TUK | MOI | KU | St. Paul's) & Outskirts.)</span>
                                     </div>
                                     <span class="zone-price">KES 200.00</span>
                                 </div>
@@ -730,8 +730,7 @@ $grandTotal = $subtotal + $shippingCost;
                                 <div class="option-content">
                                     <div class="zone-info">
                                         <span class="zone-name">Nairobi Zone D</span>
-                                        <span class="zone-areas">(Lavington, Westlands, Upperhill, Naivasha Rd,
-                                            Kileleshwa, Madaraka, Nairobi West, CBD)</span>
+                                        <span class="zone-areas">(Lavington | Westlands | Upperhill | Kileleshwa | Kilimani | Milimani | Riverside | Madaraka | Nairobi West | Eastleigh | Pangani | Ngara | Kariokor | Strathmore | Pioneer | KMTC & Outskirts.)</span>
                                     </div>
                                     <span class="zone-price">KES 300.00</span>
                                 </div>
@@ -742,8 +741,7 @@ $grandTotal = $subtotal + $shippingCost;
                                 <div class="option-content">
                                     <div class="zone-info">
                                         <span class="zone-name">Nairobi Zone C</span>
-                                        <span class="zone-areas">(Karen, Parklands, Spring Valley, Lower Kabete, Uthiru,
-                                            Kangemi, Langata, South B & C)</span>
+                                        <span class="zone-areas">( Karen | Hardy | Naivasha Rd | Muthaiga | Gigiri | Rosslyn | Nyari | Spring Valley | Loresho | Kyuna | Lower Kabete | Riverside | Parklands | Highridge | Lang'ata | South B & C | Imara | Nyayo Estate | Ridgeways | Garden Estate | Thome | Windsor | Mountain View | Uthiru | Kangemi | USIU-A | CUEA |  Nazarene | UoN (Kabete) | KU (Parklands) | St Paul’s (Nairobi) | Cooperative | Mngmt Uni (MUA) | Pan Africa | KCA (Main)  & Outskirts.)</span>
                                     </div>
                                     <span class="zone-price">KES 450.00</span>
                                 </div>
@@ -765,8 +763,7 @@ $grandTotal = $subtotal + $shippingCost;
                                 <div class="option-content">
                                     <div class="zone-info">
                                         <span class="zone-name">Nairobi Zone B</span>
-                                        <span class="zone-areas">(Dagoretti, Ruaka, Kitusuru, Runda, Ngong, Roysambu,
-                                            Kasarani, Kiambu rd, Kahawa, Kinoo)</span>
+                                        <span class="zone-areas">(Dagoretti | Ruaka | Kitisuru | Runda | Ngong | Roysambu | Kasarani | Kiambu Rd | Wendani | Sukari | Zimmerman | Githurai 44/45 | Kahawa West | Banana | Ndenderu |  KU (Main) | Kamakis | Oj | MKU (Thika Rd) | Zetech (Ruiru) | Thindigua | Eden Ville | Fourways Junction | Kenya School of Government | Utalii College & Outskirts.)</span>
                                     </div>
                                     <span class="zone-price">KES 600.00</span>
                                 </div>
@@ -777,8 +774,7 @@ $grandTotal = $subtotal + $shippingCost;
                                 <div class="option-content">
                                     <div class="zone-info">
                                         <span class="zone-name">Nairobi Zone A</span>
-                                        <span class="zone-areas">(Ruiru, Syokimau, Juja, Kitengela, Embakasi, Utawala
-                                            and environs)</span>
+                                        <span class="zone-areas">(Ruiru | Juja | Juja Farm | Kalimoni | Thika Town | JKUAT | Zetech | Gretsa | MKU (Main) | Ruai | Kamulu | Joska | Malaa | Kantafu | Kyumbi | Utawala | Embakasi | Mihango | Syokimau | Katani | Mlolongo | Sabaki | Athi River | Kitengela | Daystar (Athi River) | KCA (Kite) | Rongai | Kiserian | Tuala | Gataka | MMU | West Loop: Limuru | Tigoni | Kimunyu | Kabuku | St. Paul’s (Main) & Outskirts.)</span>
                                     </div>
                                     <span class="zone-price">KES 1,000.00</span>
                                 </div>
@@ -789,7 +785,7 @@ $grandTotal = $subtotal + $shippingCost;
                                 <div class="option-content">
                                     <div class="zone-info">
                                         <span class="zone-name">Standard International Shipping</span>
-                                        <span class="zone-areas">(Europe, USA, ROW - approx 25 Euros)</span>
+                                        <span class="zone-areas">((Africa): Uganda | Tanzania | Rwanda | Burundi | S. Sudan | DR Congo | S. Africa | Nigeria | Egypt Europe: UK | Germany | France | Netherlands | Italy | Belgium | Switzerland | Spain | Turkey (America): USA | Canada | Mexico | Brazil | Argentina | Chile (Middle East): UAE | Saudi Arabia | Qatar | Oman | Kuwait | Bahrain)</span>
                                     </div>
                                     <span class="zone-price">KES 3,500.00</span>
                                 </div>
@@ -919,11 +915,11 @@ $grandTotal = $subtotal + $shippingCost;
                                 style="padding: 1.5rem; background: rgba(108, 154, 100, 0.1); border-radius: 8px; border: 2px solid;">
                                 <p
                                     style="font-size: 0.9rem; margin: 0.5rem 0; color: var(--checkout-secondary); text-align: center;">
-                                    Pay with Card or M-PESA
+                                    All payment methods available
                                 </p>
                                 <button type="button" class="btn-complete" onclick="payWithPaystack()"
                                     style="background: #f04a5bff; margin-top: 0.75rem;">
-                                    <i class="fas fa-credit-card"></i> Pay Now
+                                    <i class="fas fa-credit-card"></i> Deserve
                                 </button>
                             </div>
                         </div>

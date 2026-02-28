@@ -9,6 +9,7 @@ $cartCount = 0;
 foreach ($_SESSION['cart'] as $item) {
     $cartCount += $item['quantity'] ?? 1;
 }
+$isEmpty = ($cartCount == 0);
 
 $isLoggedIn = isset($_SESSION['user_id']);
 ?>
@@ -68,21 +69,145 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    padding-top: 70px;
+    padding-top: 30px;
     transition: background-color 0.3s, color 0.3s;
 }
 
 header {
+    height: 100px;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: var(--primary);
+    background: black;
     border-bottom: 1px solid var(--border-color);
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     padding: 15px 25px;
     transition: all 0.3s ease;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between; /* Pushes items to the edges */
+    align-items: center;
+    padding: 15px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+.header-left, .header-center, .header-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+/* Now align the contents of each slot */
+.header-left {
+    justify-content: flex-start;
+    gap: 50px;
+}
+
+.header-center {
+    justify-content: center;     /* Forces the logo to be perfectly centered */
+}
+
+.header-right {
+    justify-content: flex-end;
+    gap: 30px;
+    margin-left: 10px;
+}
+
+.icon-button{
+    font-size: 1.3em;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-secondary);
+    border: none;
+}
+
+.icon-button:hover {
+    color: var(--accent);
+}
+
+
+/* The Underlined Search */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #333; /* The underline */
+    outline: none;
+    width: 100px; /* Adjust this width based on your needs */
+    padding-bottom: 2px;
+    transition: width 0.3s ease;
+    font-size: 1.5em;
+}
+
+@media (max-width: 992px) {
+
+}
+
+@media (max-width: 768px) {
+    .header-left{
+        gap: 15px;
+    }
+    .header-center.img {
+        width: 500px;
+    }
+    .header-right {
+        gap: 10px;
+    }
+    .search-input {
+        width: 40px;
+        padding-bottom: 2px;
+        font-size: 0.8em;
+    }
+    .icon-button{
+        font-size: 0.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-left{
+        gap: 15px;
+    }
+    .header-center.img {
+        width: 500px;
+    }
+    .header-right {
+        gap: 10px;
+    }
+    .search-input {
+        width: 40px;
+        padding-bottom: 2px;
+        font-size: 0.8em;
+    }
+    .icon-button{
+        font-size: 0.8em;
+    }
+    .main-header {
+        display: flex;
+        padding: 10px 10px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+  .search-input  {
+    color: #fff;
+  }
+}
+
+.search-input:focus {
+    width: 120px; /* Grows when clicked */
+    border-bottom: 1px solid #000; /* Darker line on focus */
 }
 
 .header-inner {
@@ -136,9 +261,11 @@ header {
 }
 
 .logo img {
-    height: 45px;
-    border-radius: 5px;
+    height: 90px;
+    width: auto;
+    border-radius: 100px;
     transition: transform 0.3s ease;
+
 }
 
 .logo:hover img {
@@ -268,6 +395,11 @@ header {
     align-items: center;
     justify-content: center;
 }
+
+.cart-icon1.cart-empty {
+    color: #ff4757 !important;
+}
+
 
 .theme-toggle:hover, 
 .cart-icon1:hover {
@@ -610,9 +742,10 @@ header {
 @media (max-width: 768px) {
     header {
         padding: 12px 15px;
+        height: 80px;
     }
     body{
-        padding-top: 120px; /* Increase for mobile */
+        padding-top: 1px; /* Increase for mobile */
     }
     .header-inner {
         flex-wrap: wrap;
@@ -638,13 +771,7 @@ header {
         height: 70px;
        width:150px;
     }
-    
-    .theme-toggle, 
-    .cart-icon1 {
-        font-size: 18px;
-        padding: 6px;
-    }
-    
+ 
     .back-to-top {
         left: 15px;
         bottom: 45px;
@@ -655,17 +782,26 @@ header {
 }
 
 @media (max-width: 480px) {
+        header {
+        padding: 12px 15px;
+        height: 80px;
+    }
+    body{
+        padding-top: 50px; /* Increase for mobile */
+    } 
+
     .left-section {
         gap: 15px;
     }
     
     .ham-menu {
-        width: 24px;
-        height: 20px;
+        width: 20px;
+        height: 16px;
     }
     
     .logo img {
         height: 36px;
+        width: 60px;
     }
     
     .search-bar {
@@ -679,7 +815,7 @@ header {
     }
     
     .nav-container {
-        gap: 15px;
+        gap: 150px;
     }
     
     .back-to-top {
@@ -851,37 +987,47 @@ header {
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-inner">
-            <div class="left-section">
-                <button class="ham-menu" onclick="toggleMenu()">
-                    <span></span><span></span><span></span>
-                </button>
-                <a href="index.php" class="logo">
-                    <img src="uploads/logo.png" alt="Royals Logo">
-                </a>
-            </div>
-            
-            <div class="search-container">
-                <form action="search_result.php" method="get">
-                    <input type="text" name="query" class="search-bar" id="searchInput" placeholder="Search for products..." value="<?php echo isset($_GET['query']) ? htmlspecialchars($_GET['query']) : ''; ?>">
-                    <button type="submit" class="search-button"><i class="fas fa-search"></i></button>
+    <header class="main-header">
+        <div class="header-left">
+            <button class="ham-menu" onclick="toggleMenu()">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="search-wrapper">
+                <form action="search_result.php" method="get" class="search-form-flex">
+                    <button type="submit" class="icon-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                    <input type="text" 
+                        name="query" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="Search" 
+                        value="<?php echo isset($_GET['query']) ? htmlspecialchars($_GET['query']) : ''; ?>">
                 </form>
+
                 <div class="search-suggestions" id="searchSuggestions">
                     <div class="suggestions-container" id="suggestionsContainer"></div>
                 </div>
             </div>
-            
-            <div class="nav-container">
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div class="cart-icon1" id="cartIcon">
-                    <i class="fas fa-shopping-cart"></i>
-                    <?php if ($cartCount > 0): ?>
-                        <span class="cart-count"><?php echo $cartCount; ?></span>
-                    <?php endif; ?>
-                </div>
+        </div>
+
+        <div class="header-center">
+            <a href="index.php" class="logo">
+                <img src="uploads/logo.jpeg" alt="Royals Logo">
+            </a>
+        </div>
+
+        <div class="header-right">
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+           <div class="cart-icon1 <?php echo $isEmpty ? 'cart-empty' : 'cart-filled'; ?>" id="cartIcon">
+                <i class="fas fa-shopping-cart"></i>
+
+                <?php if (!$isEmpty): ?>
+                    <span class="cart-count"><?php echo $cartCount; ?></span>
+                <?php endif; ?>
             </div>
         </div>
     </header>
@@ -892,15 +1038,15 @@ header {
         </div>
         <div class="navlogo">
             <a href="index.php">
-                <img src="uploads/logo.png" alt="Royals Logo">
+                <img src="uploads/logo.jpeg" alt="Royals Logo">
             </a>
         </div>
         <ul>
             <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="#" id="mobileCartBtn"><i class="fas fa-shopping-cart"></i> Cart</a></li>
             <li><a href="orders.php"><i class="fas fa-box"></i> My Orders</a></li>
-            <li><a href="about_us.php"><i class="fas fa-info-circle"></i> About us</a></li>
-            <li><a href="services.php"><i class="fas fa-concierge-bell"></i> Services</a></li>
+            <li><a href="about_us.php"><i class="fas fa-info-circle"></i> Shipping Policy</a></li>
+            <li><a href="services.php"><i class="fas fa-concierge-bell"></i> Returning Policy</a></li>
             <?php if ($isLoggedIn): ?>
                 <li><a href="logout.php" style="color: var(--accent);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             <?php else: ?>
@@ -940,14 +1086,13 @@ header {
     <div class="app-modal" id="appModal">
         <div class="modal-content">
             <div class="modal-header">
-                <img src="uploads/logo.png" alt="Royals App Icon" class="app-icon">
+                <img src="uploads/logo.jpeg" alt="Royals App Icon" class="app-icon">
                 <div class="app-info">
-                    <h2 class="app-name">Royals</h2>
-                    <p class="app-tagline">Quality Sneakers at your fingertips</p>
+                    <h2 class="app-name">Royals App</h2>
                 </div>
             </div>
             
-            <div class="modal-body">
+            <!-- <div class="modal-body">
                 <h3 class="modal-title">Get the Best Shopping Experience</h3>
                 <p>Enjoy our app-exclusive deals, faster checkout, and personalized recommendations.</p>
                 
@@ -964,7 +1109,7 @@ header {
                         <i class="fas fa-gift"></i>
                         <p>Exclusive Offers</p>
                     </div>
-                </div>
+                </div> -->
                 
                 <a href="Royals.apk" class="download-btn" id="downloadBtn">
                     <i class="fas fa-download"></i> Download App

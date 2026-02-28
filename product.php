@@ -215,6 +215,55 @@ img {
             transition: transform var(--transition-speed) ease;
         }
 
+        /* Image navigation arrows */
+        .image-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: transparent;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 2.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 5;
+        }
+
+        .image-nav-btn:hover {
+            background-color: rgba(0, 210, 255, 0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+
+        .prev-btn {
+            left: 15px;
+        }
+
+        .next-btn {
+            right: 15px;
+            color: #0d8ae9;
+
+        }
+
+        @media (max-width: 600px) {
+            .image-nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            .prev-btn {
+                left: 10px;
+            }
+            .next-btn {
+                right: 10px;
+            }
+        }
+
         .thumbnail-container {
             display: flex;
             gap: 1rem;
@@ -223,7 +272,7 @@ img {
         }
 
         .thumbnail {
-            width: 80px;
+            width: 100%;
             height: 80px;
             object-fit: cover;
             border-radius: 8px;
@@ -258,6 +307,7 @@ img {
             font-weight: 700;
             margin-bottom: 0.5rem;
             color: var(--text);
+            display: block;
         }
 
         .details-toggle {
@@ -281,6 +331,81 @@ img {
             transform: rotate(180deg);
         }
 
+        .shipping-toggle {
+            background: none;
+            border: none;
+            color: var(--product-accent);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0;
+        }
+
+        .shipping-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .shipping-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+        .return-toggle {
+            background: none;
+            border: none;
+            color: var(--product-accent);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0;
+        }
+
+        .return-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .return-toggle.active i {
+            transform: rotate(180deg);
+        }
+
+        .banner {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .banner ul {
+            list-style: none;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        .banner li {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+
+        .banner a {
+            display: block;
+            padding: 8px 0;
+            color: var(--text);
+            font-weight: 500;
+            transition: color 0.3s;
+            text-decoration: none;
+            font-size: 1.0rem;
+        }
+
+        .banner a:hover {
+            color: var(--accent);
+        }
+
         .product-category {
             display: inline-block;
             background-color: rgba(0, 210, 255, 0.1);
@@ -289,6 +414,11 @@ img {
             border-radius: 50px;
             font-size: 0.9rem;
             margin-bottom: 1.5rem;
+        }
+
+        .title-product {
+            color: var(--product-accent);
+            font-size: 1.8rem;
         }
 
         .product-price {
@@ -302,6 +432,39 @@ img {
             color: var(--text-secondary);
             line-height: 1.7;
             margin-bottom: 2rem;
+        }
+
+        .details-toggle2 {
+            background: none;
+            color: var(--product-accent);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width:100%;
+            gap: 0.5rem;
+            padding: 0;
+        }
+
+        .close-btn {
+            background: none;
+            color: var(--product-accent)
+        }
+
+        .price-stock {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .details-toggle2 i {
+            transition: transform 0.3s ease;
+        }
+
+        .details-toggle2.active i {
+            transform: rotate(180deg);
         }
 
         .product-actions {
@@ -405,6 +568,10 @@ img {
             gap: 1rem;
             margin-top: 1rem;
         }
+
+        /* home-button styling removed; use btn-secondary for home link */
+        /* .home-button rules were removed to let the link use existing button styles */
+
 
         .btn {
             padding: 1rem 2rem;
@@ -934,6 +1101,12 @@ img {
                 <div class="product-gallery">
                     <div class="main-image-container">
                         <img id="mainImage" src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image">
+                        <button class="image-nav-btn prev-btn" id="prevBtn" onclick="navigateImage(-1)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="image-nav-btn next-btn" id="nextBtn" onclick="navigateImage(1)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                     <div class="thumbnail-container">
                         <!-- Main image as first thumbnail -->
@@ -952,22 +1125,77 @@ img {
                 <div class="product-details">
                     <div class="product-header">
                         <div style="position: relative;">
-                            <h1 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h1>
-                            <button class="details-toggle" id="detailsToggle" onclick="toggleDetails()">
-                                <span>See Details</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
+                            <h1 class="product-title" id="productTitle"><?php echo htmlspecialchars($product['name']); ?></h1>
+                            <div class="banner">
+                                <button class="details-toggle" id="detailsToggle" onclick="toggleDetails()">
+                                    <span>See Product Details</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <button class="shipping-toggle" id="shippingToggle" onclick="toggleShipping()">
+                                    <span>Shipping Policy</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <button class="return-toggle" id="returnToggle" onclick="toggleReturn()">
+                                    <span>Return Policy</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </div>
                             <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
                                 <i class="far fa-heart"></i>
                             </button>
                         </div>
                         <span class="product-category"><?php echo htmlspecialchars($product['category'] ?: 'Premium'); ?></span>
-                        <div class="product-price">Ksh <?php echo number_format($product['price_ksh'], 2); ?></div>
-                        <?php echo $stock_badge; ?>
+                        <div class="price-stock">
+                            <div class="product-price">Ksh <?php echo number_format($product['price_ksh'], 2); ?></div>
+                            <div><?php echo $stock_badge; ?></div>
+                        </div>
                     </div>
                     
                     <div id="productDescription" style="display: none;">
+                        <h3 class="title-product">Product details</h3>
                         <p class="product-description"><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
+                        <div class="details-toggle2" id="detailsToggle2">
+                            <button class="close-btn" onclick="toggleDetails()">
+                                <span>Close Product Details</span>
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="shippingPolicy" style="display: none;">
+                        <h3 class="title-product">Shipping Policy</h3>
+                        <p>
+                            ◆ Shipping Days: Tuesday, Thursday, and Saturday.<br>
+                            ◆ Processing Days: Monday, Wednesday, and Friday (Orders are prepared for the next shipping window).<br>
+                            ◆ Sunday: Closed.
+                        </p>
+                        <p><strong>ORDERS PLACED</strong></p>
+                        <p>
+                            ◆ Before 11:00 AM (on Tue, Thu, Sat): Your order ships the same day.<br>
+                            ◆ After 11:00 AM (or on processing days): Your order ships on the next available shipping day.
+                        </p>
+                        <div class="details-toggle2">
+                            <button class="close-btn" onclick="toggleShipping()">
+                                <span>Close Shipping Policy</span>
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="returnPolicy" style="display: none;">
+                        <h3 class="title-shipping">Return Policy</h3>
+                        <p>
+                            ◆ You have a 3-day window from the moment of delivery to report any issues to our team.<br>
+                            ◆ Items must be entirely unworn and kept in their original box to be eligible for a return.<br>
+                            ◆ Exact Replacement policy to swap your defective pair for the same product to ensure you get the shoes you wanted.<br>
+                            ◆ Money-Back Guarantee: If we cannot provide a replacement of that specific item, we will issue a full refund to your original payment method.
+                        </p>
+                        <div class="details-toggle2">
+                            <button class="close-btn" onclick="toggleReturn()">
+                                <span>Close Return Policy</span>
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="product-actions" id="productActions">
@@ -1020,23 +1248,11 @@ img {
                                 <i class="fas fa-cart-plus"></i> 
                                 <?php echo $stock_status === 'out_of_stock' ? 'Out of Stock' : 'Add to Cart'; ?>
                             </button>
-                            <button class="btn btn-secondary <?php echo $stock_status === 'out_of_stock' ? 'btn-disabled' : ''; ?>" 
-                                    onclick="orderViaWhatsApp()" 
-                                    <?php echo $stock_status === 'out_of_stock' ? 'disabled' : ''; ?>>
-                                <i class="fab fa-whatsapp"></i> 
-                                <?php echo $stock_status === 'out_of_stock' ? 'Out of Stock' : 'Order via WhatsApp'; ?>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Social Share -->
-                    <div class="action-row" style="margin-top: 2rem;">
-                        <div class="social-share">
-                            <span>Share:</span>
-                            <a href="#" class="social-icon facebook" onclick="shareProduct('facebook')"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="social-icon twitter" onclick="shareProduct('twitter')"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-icon instagram" onclick="shareProduct('instagram')"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="social-icon whatsapp" onclick="shareProduct('whatsapp')"><i class="fab fa-whatsapp"></i></a>
+
+                            <!-- smart home link as secondary action -->
+                            <a href="index.php" class="btn btn-secondary home-link">
+                                <i class="fas fa-home"></i> Home
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1129,47 +1345,6 @@ img {
     }
 </style>
 
-<div class="related-products">
-    <h3 class="related-title"><i class="fas fa-thumbs-up"></i> You May Also Like</h3>
-    <div class="related-scroller">
-        <div class="related-container" id="relatedContainer">
-            <?php 
-            $related_result->data_seek(0);
-            while ($related = $related_result->fetch_assoc()): 
-            ?>
-                <div class="related-product">
-                    <div class="product-card">
-                        <a href="product.php?slug=<?php echo $related['slug']; ?>" class="product-link"></a>
-                        <div class="product-image">
-                            <img src="uploads/<?php echo htmlspecialchars($related['image']); ?>" 
-                                 alt="<?php echo htmlspecialchars($related['name']); ?>" 
-                                 loading="lazy">
-                            <div class="product-hover-actions">
-                                <button class="quickview-btn" onclick="event.stopPropagation(); quickView(<?php echo $related['id']; ?>)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="wishlist-btn" onclick="event.stopPropagation(); toggleFavorite(<?php echo $related['id']; ?>)">
-                                    <i class="far fa-heart"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="product-details">
-                            <h3 class="product-title"><?php echo htmlspecialchars($related['name']); ?></h3>
-                            <div class="price-container">
-                                <span class="current-price">Ksh <?php echo number_format($related['price_ksh'], 2); ?></span>
-                            </div>
-                        </div>
-                        <button class="cart-icon" 
-                                onclick="event.stopPropagation(); addToCart(<?php echo $related['id']; ?>, '<?php echo addslashes($related['name']); ?>', <?php echo $related['price_ksh']; ?>, '<?php echo $related['image']; ?>')">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
-                    </div>
-                </div>
-            <?php endwhile; ?>
-        </div>
-    </div>
-</div>
-
 <script>
     // Initialize horizontal scroller for mobile related products
     document.addEventListener('DOMContentLoaded', function() {
@@ -1210,21 +1385,184 @@ img {
 <?php endif; ?>
             
     <script>
+        // Image navigation
+        let allImages = [];
+        let currentImageIndex = 0;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Collect all image sources (main + secondary)
+            const mainImage = "uploads/<?php echo htmlspecialchars($product['image']); ?>";
+            allImages.push(mainImage);
+            
+            // Add secondary images
+            <?php foreach ($secondary_images as $image): ?>
+                <?php if (!empty($image)): ?>
+                    allImages.push("uploads/<?php echo htmlspecialchars($image); ?>");
+                <?php endif; ?>
+            <?php endforeach; ?>
+            
+            // Hide navigation buttons if only one image
+            if (allImages.length <= 1) {
+                document.getElementById('prevBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'none';
+            }
+            // Show only next button on first image
+            else {
+                document.getElementById('prevBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'flex';
+            }
+        });
+        
+        function navigateImage(direction) {
+            currentImageIndex += direction;
+            
+            // Clamp instead of wrapping around
+            if (currentImageIndex < 0) {
+                currentImageIndex = 0;
+            } else if (currentImageIndex >= allImages.length) {
+                currentImageIndex = allImages.length - 1;
+            }
+            
+            // Update main image
+            document.getElementById('mainImage').src = allImages[currentImageIndex];
+            
+            // Update thumbnail active state
+            document.querySelectorAll('.thumbnail').forEach((thumb, index) => {
+                thumb.classList.remove('active');
+                if (index === currentImageIndex) {
+                    thumb.classList.add('active');
+                }
+            });
+            
+            // Update button visibility based on current position
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // First image: show only next button
+            if (currentImageIndex === 0) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'flex';
+            }
+            // Last image: show only prev button
+            else if (currentImageIndex === allImages.length - 1) {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'none';
+            }
+            // Middle images: show both buttons
+            else {
+                prevBtn.style.display = 'flex';
+                nextBtn.style.display = 'flex';
+            }
+        }
+
         // Toggle product details view
         function toggleDetails() {
             const toggleBtn = document.getElementById('detailsToggle');
             const description = document.getElementById('productDescription');
             const actions = document.getElementById('productActions');
-            
+            const title = document.querySelector(".product-title");
+            const price = document.querySelector(".price-stock");
+            const toggle = document.querySelector(".details-toggle");
+            const detailsBtn = document.querySelector(".shipping-toggle");
+            const detailsBtn2 = document.querySelector(".return-toggle");
+            const category = document.querySelector(".product-category");
+
             if (description.style.display === 'none') {
+                title.style.display = 'none';
+                price.style.display = 'none';
+                toggle.style.display = 'none';
+                detailsBtn.style.display = 'none';
+                detailsBtn2.style.display = 'none';
+                category.style.display = 'none';
                 description.style.display = 'block';
                 actions.classList.add('hidden');
-                toggleBtn.innerHTML = '<span>Hide Details</span><i class="fas fa-chevron-up"></i>';
+                // toggleBtn.innerHTML = '<span>Hide Details</span><i class="fas fa-chevron-up"></i>';
                 toggleBtn.classList.add('active');
             } else {
+                title.style.display = 'block';
+                price.style.display = 'block';
+                toggle.style.display = 'block';
+                // restore the other policy buttons when details are closed
+                detailsBtn.style.display = 'flex';
+                detailsBtn2.style.display = 'flex';
+                category.style.display = 'block';
                 description.style.display = 'none';
                 actions.classList.remove('hidden');
-                toggleBtn.innerHTML = '<span>See Details</span><i class="fas fa-chevron-down"></i>';
+                // toggleBtn.innerHTML = '<span>See Details</span><i class="fas fa-chevron-down"></i>';
+                toggleBtn.classList.remove('active');
+            }
+        }
+
+                // Toggle shipping policy view
+        function toggleShipping() {
+            const toggleBtn = document.getElementById('shippingToggle');
+            const description = document.getElementById('shippingPolicy');
+            const actions = document.getElementById('productActions');
+            const title = document.querySelector(".product-title");
+            const price = document.querySelector(".price-stock");
+            const detailsBtn = document.querySelector(".shipping-toggle");
+            const detailsBtn2 = document.querySelector(".return-toggle");
+            const toggle = document.querySelector(".details-toggle");
+            const category = document.querySelector(".product-category");
+
+            if (description.style.display === 'none') {
+                title.style.display = 'none';
+                price.style.display = 'none';
+                // hide both other policy/detail toggles while shipping is shown
+                detailsBtn.style.display = 'none';
+                detailsBtn2.style.display = 'none';
+                toggle.style.display = 'none';
+                category.style.display = 'none';
+                description.style.display = 'block';
+                actions.classList.add('hidden');
+                toggleBtn.classList.add('active');
+            } else {
+                title.style.display = 'block';
+                price.style.display = 'block';
+                // restore other toggles
+                detailsBtn.style.display = 'flex';
+                detailsBtn2.style.display = 'flex';
+                toggle.style.display = 'block';
+                category.style.display = 'block';
+                description.style.display = 'none';
+                actions.classList.remove('hidden');
+                toggleBtn.classList.remove('active');
+            }
+        }
+
+                // Toggle return policy view
+        function toggleReturn() {
+            const toggleBtn = document.getElementById('returnToggle');
+            const description = document.getElementById('returnPolicy');
+            const actions = document.getElementById('productActions');
+            const title = document.querySelector(".product-title");
+            const price = document.querySelector(".price-stock");
+            const detailsBtn2 = document.querySelector(".return-toggle");
+            const detailsBtn = document.querySelector(".shipping-toggle");
+            const toggle = document.querySelector(".details-toggle");
+            const category = document.querySelector(".product-category");
+
+            if (description.style.display === 'none') {
+                title.style.display = 'none';
+                price.style.display = 'none';
+                // hide both detail and shipping toggles while return info is shown
+                detailsBtn2.style.display = 'none';
+                detailsBtn.style.display = 'none';
+                toggle.style.display = 'none';
+                category.style.display = 'none';
+                description.style.display = 'block';
+                actions.classList.add('hidden');
+                toggleBtn.classList.add('active');
+            } else {
+                title.style.display = 'block';
+                price.style.display = 'block';
+                // restore toggles
+                detailsBtn2.style.display = 'flex';
+                detailsBtn.style.display = 'flex';
+                toggle.style.display = 'block';
+                category.style.display = 'block';
+                description.style.display = 'none';
+                actions.classList.remove('hidden');
                 toggleBtn.classList.remove('active');
             }
         }
@@ -1241,6 +1579,14 @@ img {
             
             // Change main image
             document.getElementById('mainImage').src = newSrc;
+            
+            // Update current image index based on thumbnail clicked
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                if (thumb === element) {
+                    currentImageIndex = index;
+                }
+            });
         }
         
         // Toggle select dropdown

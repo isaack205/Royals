@@ -64,16 +64,8 @@ if (!empty($searchQuery)) {
 }
 
 // Fetch limited products for sections
-$featuredSql = "SELECT p.id, p.name, p.price_ksh, p.image FROM products p 
-                INNER JOIN featured_products fp ON p.id = fp.product_id
-                ORDER BY p.id DESC LIMIT 10";
-$featuredResult = $connection->query($featuredSql);
-
 $newProductsSql = "SELECT * FROM products ORDER BY id DESC LIMIT 12";
 $newProductsResult = $connection->query($newProductsSql);
-
-$recommendedSql = "SELECT * FROM products ORDER BY RAND() LIMIT 84";
-$recommendedResult = $connection->query($recommendedSql);
 
 // Include the header
 include('header.php');
@@ -82,18 +74,33 @@ include('header.php');
 <style>
 /* Added CSS for clickable product cards */
 /* Added CSS for category filters */
+
+.mainContent {
+    display: flex;
+    padding-top: 70px;
+}
+
+@media (max-width: 486px) {
+    .mainContent {
+        padding-top: 0;
+    }
+}
+
 .category-filters {
+    
     display: flex;
     flex-wrap: nowrap; /* Force horizontal layout */
     overflow-x: auto;
+    align-items: center;
     overflow-y: hidden;
-    gap: 10px;
-    margin: 20px 0;
-    padding: 0 10px;
-    justify-content: flex-start;
+    gap: 20px;
+    margin: 20px 3px;
+    padding: 0 20px;
+    justify-content: center;
     white-space: nowrap;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE 10+ */
+    width: 100%;
 }
 
 .category-filters::-webkit-scrollbar {
@@ -187,11 +194,13 @@ include('header.php');
 }
 
 .product-title {
-    font-size: 1rem;
+    font-size: 0.75rem;
     margin-bottom: 0.5rem;
-    white-space: nowrap;
+    white-space: wrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--accent);
+    font: sans-serif;
 }
 
 .product-rating {
@@ -229,8 +238,8 @@ include('header.php');
 /* Product grid with tighter spacing */
 .products-container {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
     margin: 0 0.25rem 1rem; /* top | horizontal | bottom */
 }
 
@@ -450,7 +459,7 @@ include('header.php');
 .section-banner {
     position: relative;
     width: 100%;
-    height: 150px;
+    height: 450px;
     border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
@@ -459,15 +468,34 @@ include('header.php');
     transition: transform 0.3s;
 }
 
+/* Media query for small screens */
+@media only screen and (max-width: 768px) {
+    .section-banner {
+        width: 100%;
+        height: 150px;
+    }
+}
+
+/* Optional: Further adjustments for very small screens */
+@media only screen and (max-width: 480px) {
+    .section-banner {
+        width: 100%;
+        height: 150px;
+    }
+}
+
 .section-banner:hover {
     transform: translateY(-3px);
 }
 
 .banner-content {
     position: absolute;
-    bottom: 0;
-    left: 0;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
     color: white;
     width: 100%;
     background: linear-gradient(transparent, rgba(0,0,0,0.7));
@@ -483,6 +511,7 @@ include('header.php');
     margin: 5px 0 0;
     font-size: 0.9rem;
     opacity: 0.9;
+
 }
 
 /* No results styling */
@@ -592,6 +621,8 @@ include('header.php');
     color: white;
     transform: scale(1.1);
 }
+
+
 </style>
 
     <?php if ($searchResults || $sectionFilter || $brandFilter): ?>
@@ -662,24 +693,7 @@ include('header.php');
                         </div>
                         <div class="product-details">
                             <h3 class="product-title"><?php echo htmlspecialchars($row['name']); ?></h3>
-                            <?php if ($row['rating']): ?>
-                                <div class="product-rating">
-                                    <?php 
-                                    $fullStars = floor($row['rating']);
-                                    $halfStar = ($row['rating'] - $fullStars) >= 0.5;
-                                    
-                                    for ($i = 0; $i < 5; $i++) {
-                                        if ($i < $fullStars) {
-                                            echo '<i class="fas fa-star"></i>';
-                                        } elseif ($i == $fullStars && $halfStar) {
-                                            echo '<i class="fas fa-star-half-alt"></i>';
-                                        } else {
-                                            echo '<i class="far fa-star"></i>';
-                                        }
-                                    }
-                                    ?>
-                                </div>
-                            <?php endif; ?>
+                           
                             <div class="price-container">
                                 <span class="current-price">Ksh <?php echo number_format($row['price_ksh'], 2); ?></span>
                             </div>
@@ -700,50 +714,7 @@ include('header.php');
         <?php endif; ?>
     <?php else: ?>
         <!-- Main Content (Default View) -->
-        <div id="mainContent">
-            <!-- Fixed Slider Section -->
-            <div class="slider-container">
-                <div class="slider">
-                    <?php
-                    $adsDirectory = 'ads/';
-                    $defaultBanner = 'uploads/default-banner.jpg';
-                    
-                    // Check if directory exists
-                    if (is_dir($adsDirectory)) {
-                        $ads = array_diff(scandir($adsDirectory), ['.', '..']);
-                        
-                        if (count($ads) > 0) {
-                            foreach ($ads as $ad) {
-                                $filePath = $adsDirectory . $ad;
-                                $fileExt = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-                                
-                                if (in_array($fileExt, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                                    echo "<div class='slide'><img src='$filePath' alt='Ad Banner' loading='lazy'></div>";
-                                } 
-                                elseif (in_array($fileExt, ['mp4', 'webm', 'ogg'])) {
-                                    echo "<div class='slide'>
-                                            <video autoplay muted loop playsinline>
-                                                <source src='$filePath' type='video/$fileExt'>
-                                            </video>
-                                          </div>";
-                                }
-                            }
-                        } else {
-                            // Fallback if no ads found
-                            echo "<div class='slide'><img src='$defaultBanner' alt='Default Banner'></div>";
-                        }
-                    } else {
-                        // Fallback if ads directory doesn't exist
-                        echo "<div class='slide'><img src='$defaultBanner' alt='Default Banner'></div>";
-                        echo "<div class='slide'><img src='uploads/banner2.jpg' alt='Fallback Banner'></div>";
-                    }
-                    ?>
-                </div>
-                <div class="slibuttonv">
-                    <button class="prev"><i class="fas fa-chevron-left"></i></button>
-                    <button class="next"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
+        <div class="mainContent">
             <!-- Category Filters -->
             <div class="category-filters">
                 <a href="?category=men" class="category-filter <?php echo ($categoryFilter == 'men') ? 'active' : ''; ?>">
@@ -767,154 +738,21 @@ include('header.php');
                 <a href="?category=sports" class="category-filter <?php echo ($categoryFilter == 'sports') ? 'active' : ''; ?>">
                     <i class="fas fa-running"></i> Sports
                 </a>
-                <a href="index.php" class="category-filter <?php echo (!$categoryFilter) ? 'active' : ''; ?>">
+                <!-- <a href="index.php" class="category-filter <?php echo (!$categoryFilter) ? 'active' : ''; ?>">
                     <i class="fas fa-times"></i> Clear Filters
-                </a>
+                </a> -->
             </div>
+        </div>            
 
-
-            <!-- New Arrivals Section -->
-<h2 class="section-title">
-    <i class="fas fa-fire"></i> NEW ARRIVALS
-</h2>
-<div class="section-banner-container">
-    <div class="section-banner" onclick="filterBySection('new')" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('uploads/best.png')">
-        <div class="banner-content">
-            <h3>Just Dropped</h3>
-            <p>Explore the latest arrivals →</p>
-        </div>
-    </div>
-</div>
-
-<style>
-    /* New Arrivals Horizontal Scroller - Mobile Only */
-    @media (max-width: 768px) {
-        .new-arrivals-scroller {
-            position: relative;
-            width: 100%;
-            overflow-x: hidden;
-            margin: 1rem 0;
-            padding: 0;
-        }
-        
-        .new-arrivals-container {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            padding: 0 0 1rem 0;
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE 10+ */
-        }
-        
-        .new-arrivals-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari */
-        }
-        
-        .new-arrivals-product {
-            flex: 0 0 auto;
-            width: calc(50% - 10px); /* Two products visible at a time */
-            margin-right: 10px;
-            scroll-snap-align: start;
-            transition: transform 0.3s ease;
-        }
-        
-        .new-arrivals-product:first-child {
-            margin-left: 10px;
-        }
-        
-        .new-arrivals-product:last-child {
-            margin-right: 10px;
-        }
-        
-        /* Auto-scroll animation */
-        @keyframes scrollProducts {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-50%); }
-            40% { transform: translateX(-100%); }
-            60% { transform: translateX(-150%); }
-            80% { transform: translateX(-200%); }
-        }
-        
-        .scrolling .new-arrivals-container {
-            animation: scrollProducts 20s infinite;
-        }
-        
-        /* Pause on hover */
-        .new-arrivals-container:hover {
-            animation-play-state: paused;
-        }
-        
-        /* Maintain consistent product card size */
-        .new-arrivals-product .product-card {
-            width: 100%;
-            margin: 0;
-        }
-    }
-    
-    /* Desktop view remains the same */
-    @media (min-width: 769px) {
-        .new-arrivals-container {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 0.5rem;
-            margin: 0 0.25rem 1rem;
-        }
-        
-        @media (max-width: 1200px) {
-            .new-arrivals-container {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        @media (max-width: 900px) {
-            .new-arrivals-container {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-    }
-</style>
-
-<div class="new-arrivals-scroller">
-    <div class="new-arrivals-container" id="newArrivalsContainer">
-        <?php 
-        // Reset pointer to beginning for mobile display
-        if ($newProductsResult && $newProductsResult->num_rows > 0) {
-            $newProductsResult->data_seek(0);
-            while ($newProduct = $newProductsResult->fetch_assoc()): 
-        ?>
-            <div class="new-arrivals-product">
-                <div class="product-card">
-                    <a href="product.php?id=<?php echo $newProduct['id']; ?>" class="product-link"></a>
-                    <div class="product-image">
-                        <img src="uploads/<?php echo htmlspecialchars($newProduct['image']); ?>" alt="<?php echo htmlspecialchars($newProduct['name']); ?>" loading="lazy">
-                        <div class="product-hover-actions">
-                            <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $newProduct['id']; ?>)">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="product-details">
-                        <h3 class="product-title"><?php echo htmlspecialchars($newProduct['name']); ?></h3>
-                        <div class="price-container">
-                            <span class="current-price">Ksh <?php echo number_format($newProduct['price_ksh'], 2); ?></span>
-                        </div>
-                    </div>
-                    <button class="cart-icon" onclick="event.stopPropagation(); addToCart(<?php echo $newProduct['id']; ?>, '<?php echo addslashes($newProduct['name']); ?>', <?php echo $newProduct['price_ksh']; ?>, '<?php echo $newProduct['image']; ?>')">
-                        <i class="fas fa-cart-plus"></i>
-                    </button>
+        <!-- New Arrivals Section -->
+        <div class="section-banner-container">
+            <div class="section-banner" onclick="filterBySection('new')" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('uploads/best.jpeg')">
+                <div class="banner-content">
+                    <h3>Just Dropped</h3>
+                    <p>Explore the latest arrivals →</p>
                 </div>
             </div>
-        <?php 
-            endwhile;
-        } else {
-            echo '<p class="no-products">No newly added products found.</p>';
-        }
-        ?>
-    </div>
-</div>
+        </div>
 
 <script>
     // Initialize horizontal scroller for mobile
@@ -1108,170 +946,37 @@ function quickView(productId) {
         });
 }
 </script>
-            <!-- Featured Products Section -->
-            <h2 class="section-title">
-                <i class="fas fa-star"></i> BEST FROM ROYALS
-            </h2>
-            <div class="section-banner-container">
-                <div class="section-banner" onclick="filterBySection('featured')" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('uploads/best1.jpeg')">
-                    <div class="banner-content">
-                        <h3>Premium Selection</h3>
-                        <p>Discover our featured collection →</p>
-                    </div>
-                </div>
-            </div>
             <div class="products-container">
-                <?php if ($featuredResult && $featuredResult->num_rows > 0): ?>
-                    <?php while ($featuredProduct = $featuredResult->fetch_assoc()): ?>
-                        <div class="product-card">
-                            <a href="product.php?id=<?php echo $featuredProduct['id']; ?>" class="product-link"></a>
-                            <div class="product-image">
-                                <img src="uploads/<?php echo htmlspecialchars($featuredProduct['image']); ?>" alt="<?php echo htmlspecialchars($featuredProduct['name']); ?>" loading="lazy">
-                                <div class="product-hover-actions">
-                                    <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $featuredProduct['id']; ?>)">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="product-details">
-                                <h3 class="product-title"><?php echo htmlspecialchars($featuredProduct['name']); ?></h3>
-                                <div class="price-container">
-                                    <span class="current-price">Ksh <?php echo number_format($featuredProduct['price_ksh'], 2); ?></span>
-                                </div>
-                            </div>
-                            <button class="cart-icon" onclick="event.stopPropagation(); addToCart(<?php echo $featuredProduct['id']; ?>, '<?php echo addslashes($featuredProduct['name']); ?>', <?php echo $featuredProduct['price_ksh']; ?>, '<?php echo $featuredProduct['image']; ?>')">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p class="no-products">No featured products available at the moment.</p>
-                <?php endif; ?>
-            </div>
-
-            
-
-            <!-- Top Brands Section -->
-            <h2 class="section-title">
-                <i class="fas fa-tags"></i> TOP BRANDS
-            </h2>
-            <div class="section-banner-container">
-                <div class="section-banner" onclick="showAllBrands()" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('uploads/brands.jpeg')">
-                    <div class="banner-content">
-                        <h3>Premium Brands</h3>
-                        <p>Shop by your favorite labels →</p>
-                    </div>
-                </div>
-            </div>
-            <div class="brands-container">
-                <div class="brand-card" onclick="filterByBrand('nike')">
-                    <img src="uploads/nike.png" alt="Nike" class="brand-logo">
-                    <span class="brand-name">Nike</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('adidas')">
-                    <img src="uploads/adidas.png" alt="Adidas" class="brand-logo">
-                    <span class="brand-name">Adidas</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('jordan')">
-                    <img src="uploads/jordan.png" alt="Jordan" class="brand-logo">
-                    <span class="brand-name">Jordan</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('puma')">
-                    <img src="uploads/puma.png" alt="Puma" class="brand-logo">
-                    <span class="brand-name">Puma</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('newbalance')">
-                    <img src="uploads/nb.png" alt="New Balance" class="brand-logo">
-                    <span class="brand-name">New Balance</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('vans')">
-                    <img src="uploads/vans.png" alt="Vans" class="brand-logo">
-                    <span class="brand-name">Vans</span>
-                </div>
-
-                 <div class="brand-card" onclick="filterByBrand('clarks')">
-                    <img src="uploads/clarks.png" alt="Clarks" class="brand-logo">
-                    <span class="brand-name">Clarks</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('fila')">
-                    <img src="uploads/fila.png" alt="Fila" class="brand-logo">
-                    <span class="brand-name">Fila</span>
-                </div>
-                 <div class="brand-card" onclick="filterByBrand('converse')">
-                    <img src="uploads/converse.png" alt="Converse" class="brand-logo">
-                    <span class="brand-name">Converse</span>
-                </div>
-                <div class="brand-card" onclick="filterByBrand('timberland')">
-                    <img src="uploads/timbaland.png" alt="Timbaland" class="brand-logo">
-                    <span class="brand-name">Timbaland</span>
-                </div>
-                 <div class="brand-card" onclick="filterByBrand('gucci')">
-                    <img src="uploads/gucci.png" alt="Gucci" class="brand-logo">
-                    <span class="brand-name">Gucci</span>
-                </div>
-                 <div class="brand-card" onclick="filterByBrand('lv')">
-                    <img src="uploads/lv.png" alt="Lv" class="brand-logo">
-                    <span class="brand-name">Lv</span>
-                </div>
+                <?php 
+                // Fetch all products
+                $allProductsSql = "SELECT * FROM products ORDER BY id DESC";
+                $allProductsResult = $connection->query($allProductsSql);
                 
-            </div>
-
-            <!-- Recommended Products Section -->
-            <h2 class="section-title">
-                <i class="fas fa-thumbs-up"></i> RECOMMENDED FOR YOU
-            </h2>
-            <div class="section-banner-container">
-                <div class="section-banner" onclick="filterBySection('recommended')" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('uploads/recommended.jpeg')">
-                    <div class="banner-content">
-                        <h3>Personal Picks</h3>
-                        <p>Selected just for you →</p>
-                    </div>
-                </div>
-            </div>
-            <div class="products-container">
-                <?php if ($recommendedResult && $recommendedResult->num_rows > 0): ?>
-                    <?php while ($recommendedProduct = $recommendedResult->fetch_assoc()): ?>
-                        <div class="product-card">
-                            <a href="product.php?id=<?php echo $recommendedProduct['id']; ?>" class="product-link"></a>
-                            <div class="product-image">
-                                <img src="uploads/<?php echo htmlspecialchars($recommendedProduct['image']); ?>" alt="<?php echo htmlspecialchars($recommendedProduct['name']); ?>" loading="lazy">
-                                <div class="product-hover-actions">
-                                    <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $recommendedProduct['id']; ?>)">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
+                if ($allProductsResult && $allProductsResult->num_rows > 0): 
+                    while ($product = $allProductsResult->fetch_assoc()): 
+                ?>
+                    <div class="product-card">
+                        <a href="product.php?id=<?php echo $product['id']; ?>" class="product-link"></a>
+                        <div class="product-image">
+                            <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" loading="lazy">
+                            <div class="product-hover-actions">
+                                <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $product['id']; ?>)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
                             </div>
-                            <div class="product-details">
-                                <h3 class="product-title"><?php echo htmlspecialchars($recommendedProduct['name']); ?></h3>
-                                <?php if ($recommendedProduct['rating']): ?>
-                                    <div class="product-rating">
-                                        <?php 
-                                        $fullStars = floor($recommendedProduct['rating']);
-                                        $halfStar = ($recommendedProduct['rating'] - $fullStars) >= 0.5;
-                                        
-                                        for ($i = 0; $i < 5; $i++) {
-                                            if ($i < $fullStars) {
-                                                echo '<i class="fas fa-star"></i>';
-                                            } elseif ($i == $fullStars && $halfStar) {
-                                                echo '<i class="fas fa-star-half-alt"></i>';
-                                            } else {
-                                                echo '<i class="far fa-star"></i>';
-                                            }
-                                        }
-                                        ?>
-                                    </div>
-                                <?php endif; ?>
-                                <div class="price-container">
-                                    <span class="current-price">Ksh <?php echo number_format($recommendedProduct['price_ksh'], 2); ?></span>
-                                </div>
-                            </div>
-                            <button class="cart-icon" onclick="event.stopPropagation(); addToCart(<?php echo $recommendedProduct['id']; ?>, '<?php echo addslashes($recommendedProduct['name']); ?>', <?php echo $recommendedProduct['price_ksh']; ?>, '<?php echo $recommendedProduct['image']; ?>')">
-                                <i class="fas fa-cart-plus"></i>
-                            </button>
                         </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p class="no-products">No recommended products found.</p>
+                        <div class="product-details">
+                            <h3 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h3>
+                            <div class="price-container">
+                                <span class="current-price">Ksh <?php echo number_format($product['price_ksh'], 2); ?></span>
+                            </div>
+                        </div>
+                    </div>
+                <?php 
+                    endwhile;
+                else: 
+                ?>
+                    <p class="no-products">No products found.</p>
                 <?php endif; ?>
             </div>
         </div>

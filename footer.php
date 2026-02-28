@@ -16,6 +16,9 @@ footer {
 
 .footer-section {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .footer-section h3 {
@@ -63,10 +66,10 @@ footer {
 
 .social-icons a {
     display: inline-block;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: var(--text-secondary);
     transition: all 0.3s;
-    margin-right: 15px;
+    padding: 0 20px;
 }
 
 .social-icons a:hover {
@@ -101,6 +104,11 @@ footer {
     .footer-section {
         margin-bottom: 1rem;
     }
+
+    .social-icons a {
+        padding: 0 3px;
+        font-size: 0.9rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -116,13 +124,18 @@ footer {
         font-size: 0.8rem;
         line-height: 1.5;
     }
+
+    .social-icons a {
+        padding: 0 3px;
+        font-size: 0.9rem;
+    }
 }
     </style>
         <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         <div class="footer-content">
-            <div class="footer-section">
+            <!-- <div class="footer-section">
                 <h3>About ROYALS</h3>
                 <p>Your premier destination for quality sneakers in Kenya. We offer the latest styles from top brands at affordable prices.</p>
             </div>
@@ -141,17 +154,17 @@ footer {
                 <a href="shipping.php">Shipping Policy</a>
                 <a href="returns.php">Returns & Refunds</a>
                 <a href="privacy.php">Privacy Policy</a>
-            </div>
+            </div> -->
             
             <div class="footer-section">
                 <h3>Contact Us</h3>
-               <p><i class="fas fa-phone-alt"></i> <a href="tel:+254795786918">+254 795 786 918</a></p>
-<p><i class="fas fa-envelope"></i> <a href="mailto:info@brandx.co.ke">info@royals.co.ke</a></p>
-
                 <div class="social-icons" style="margin-top: 10px;">
-                    <a href="https://www.instagram.com/top_brand_x" target="_blank" style="margin-right: 10px;"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/254795786918" target="_blank" style="margin-right: 10px;"><i class="fab fa-whatsapp"></i></a>
-                    <a href="https://facebook.com/brandxkenya" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="tel:+254703301003" target="_blank" style="margin-right: 10px;"><i class="fas fa-phone-alt"></i></a>
+                    <a href="mailto:info@royals.co.ke" target="_blank" style="margin-right: 10px;"><i class="fas fa-envelope"></i></a>
+                    <a href="https://www.instagram.com/royals.ke/" target="_blank" style="margin-right: 10px;"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/254703301003" target="_blank" style="margin-right: 10px;"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/profile.php?id=61587283432306" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@royals.ke" target="_blank"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
         </div>

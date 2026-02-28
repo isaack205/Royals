@@ -36,7 +36,7 @@ include('header.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders - BrandX</title>
+    <title>My Orders - Royals</title>
     <style>
         :root {
             --primary: #00d2ff;
@@ -458,13 +458,24 @@ include('header.php');
 
         /* Print Styles */
         @media print {
+            /* hide interactive controls */
             .order-actions, .filter-btn, .page-header button {
                 display: none !important;
             }
 
+            /* make cards plain and add breaks between them so each prints on its own sheet */
             .order-card {
                 box-shadow: none;
                 border: 1px solid var(--light-gray);
+                page-break-after: always;
+                break-after: page;
+                padding-bottom: 1rem;
+            }
+
+            /* avoid printing empty last break */
+            .order-card:last-child {
+                page-break-after: auto;
+                break-after: auto;
             }
         }
     </style>
