@@ -93,7 +93,6 @@ include('header.php');
     overflow-x: auto;
     align-items: center;
     overflow-y: hidden;
-    gap: 20px;
     margin: 20px 3px;
     padding: 0 20px;
     justify-content: center;
@@ -109,9 +108,7 @@ include('header.php');
 
 .category-filter {
     flex: 0 0 auto; /* Prevent shrinking and maintain size */
-    padding: 8px 15px;
-    background-color: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 35px;
     border-radius: 20px;
     color: var(--text);
     text-decoration: none;
@@ -171,7 +168,7 @@ include('header.php');
 
 .product-image img {
     width: 100%;
-    height: 180px;
+    height: 300px;
     object-fit: cover;
 }
 
@@ -191,16 +188,21 @@ include('header.php');
 .product-details {
     padding: 1rem;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .product-title {
     font-size: 0.75rem;
     margin-bottom: 0.5rem;
-    white-space: wrap;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--accent);
-    font: sans-serif;
+    font-family: 'Poppins', 'Montserrat', sans-serif;
+    font-weight: 300; /* slim */
+    letter-spacing: 0.2px;
 }
 
 .product-rating {
@@ -239,22 +241,41 @@ include('header.php');
 .products-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    gap: 1.5rem;
     margin: 0 0.25rem 1rem; /* top | horizontal | bottom */
+    padding-top: 30px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
     .products-container {
         grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
         margin: 0 0.25rem 1rem;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 190px;
+        object-fit: cover;
     }
 }
 
 @media (max-width: 900px) {
     .products-container {
         grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
         margin: 0 0.25rem 1rem;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .category-filter {
+        padding: 8px 10px;
     }
 }
 
@@ -262,6 +283,17 @@ include('header.php');
     .products-container {
         grid-template-columns: repeat(2, 1fr);
         margin: 0 0.1rem 0.75rem; /* Even tighter on mobile */
+        gap: 0.5rem;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .category-filter {
+        padding: 8px 10px;
     }
 }
 
@@ -503,7 +535,7 @@ include('header.php');
 
 .banner-content h3 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 2.2rem;
     font-weight: 600;
 }
 
@@ -511,7 +543,10 @@ include('header.php');
     margin: 5px 0 0;
     font-size: 0.9rem;
     opacity: 0.9;
-
+    border: 4px solid #f1e9e9;
+    border-radius: 102px;
+    padding: 8px;
+    font-weight: bold;
 }
 
 /* No results styling */
@@ -650,11 +685,11 @@ include('header.php');
                     'title' => 'Premium Selection',
                     'text' => 'Discover our featured collection →'
                 ],
-                'new' => [
-                    'image' => 'uploads/best.png',
-                    'title' => 'Just Dropped',
-                    'text' => 'Explore the latest arrivals →'
-                ],
+                // 'new' => [
+                //     'image' => 'uploads/best.jpeg',
+                //     'title' => 'Just Dropped',
+                //     'text' => 'Explore the latest arrivals →'
+                // ],
                 'recommended' => [
                     'image' => 'uploads/recommended.jpeg',
                     'title' => 'Personal Picks',
@@ -685,11 +720,6 @@ include('header.php');
                         <a href="product.php?id=<?php echo $row['id']; ?>" class="product-link"></a>
                         <div class="product-image">
                             <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" loading="lazy">
-                            <div class="product-hover-actions">
-                                <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $row['id']; ?>)">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
                         </div>
                         <div class="product-details">
                             <h3 class="product-title"><?php echo htmlspecialchars($row['name']); ?></h3>
@@ -698,9 +728,6 @@ include('header.php');
                                 <span class="current-price">Ksh <?php echo number_format($row['price_ksh'], 2); ?></span>
                             </div>
                         </div>
-                        <button class="cart-icon" onclick="event.stopPropagation(); addToCart(<?php echo $row['id']; ?>, '<?php echo addslashes($row['name']); ?>', <?php echo $row['price_ksh']; ?>, '<?php echo $row['image']; ?>')">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
                     </div>
                 <?php endwhile; ?>
             </div>
@@ -748,8 +775,8 @@ include('header.php');
         <div class="section-banner-container">
             <div class="section-banner" onclick="filterBySection('new')" style="background-image: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('uploads/best.jpeg')">
                 <div class="banner-content">
-                    <h3>Just Dropped</h3>
-                    <p>Explore the latest arrivals →</p>
+                    <h3>The Drop</h3>
+                    <p class="shop-p">Shop Now</p>
                 </div>
             </div>
         </div>
@@ -959,11 +986,11 @@ function quickView(productId) {
                         <a href="product.php?id=<?php echo $product['id']; ?>" class="product-link"></a>
                         <div class="product-image">
                             <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" loading="lazy">
-                            <div class="product-hover-actions">
+                            <!-- <div class="product-hover-actions">
                                 <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $product['id']; ?>)">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="product-details">
                             <h3 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h3>

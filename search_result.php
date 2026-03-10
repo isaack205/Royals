@@ -131,14 +131,21 @@ include('header.php');
         .product-details {
             padding: 1rem;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .product-title {
-            font-size: 1rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--accent);
+            font-family: 'Poppins', 'Montserrat', sans-serif;
+            font-weight: 300; /* slim */
+            letter-spacing: 0.2px;
         }
 
         .product-rating {
@@ -181,6 +188,12 @@ include('header.php');
             opacity: 0;
             transition: opacity 0.3s;
             z-index: 2;
+            pointer-events: none; /* allow clicks to pass through to the link underneath */
+        }
+
+        /* make buttons inside the overlay still clickable */
+        .product-hover-actions button {
+            pointer-events: auto;
         }
 
         .product-card:hover .product-hover-actions {
@@ -346,12 +359,9 @@ include('header.php');
                             </div>
                         <?php endif; ?>
                         <div class="price-container">
-                            <span class="current-price">Ksh <?php echo number_format($product['price_ksh'], 2); ?></span>
+                            <span class="current-price">Ksh <?php echo isset($product['price_ksh']) ? number_format($product['price_ksh'], 2) : '0.00'; ?></span>
                         </div>
                     </div>
-                    <button class="cart-icon" onclick="event.stopPropagation(); addToCart(<?php echo $product['id']; ?>, '<?php echo addslashes($product['name']); ?>', <?php echo $product['price_ksh']; ?>, '<?php echo $product['image']; ?>')">
-                        <i class="fas fa-cart-plus"></i>
-                    </button>
                 </div>
             <?php endwhile; ?>
         </div>

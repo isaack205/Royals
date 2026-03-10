@@ -219,9 +219,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-container">
       <div class="logo">
 
-            <a href="home.php">
+            <a href="index.php">
 
-                <img src="uploads/brandxlogo.png" alt="BrandX Logo">
+                <img src="uploads/logo.jpeg" alt="Royals Logo">
 
             </a>
 

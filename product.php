@@ -154,7 +154,7 @@ img {
 
         @media (max-width: 768px) {
             body {
-                padding-top: 120px; /* Increased padding for mobile */
+                padding-top: 60px; /* Increased padding for mobile */
             }
             .meta-section {
     width: 100%;
@@ -184,16 +184,15 @@ img {
         }
 
         .product-grid {
-            display: flex;
-            gap: 3rem;
+            display: grid;
+            grid-template-columns: 500px 1fr 180px;
+            gap: 2rem;
             margin-bottom: 3rem;
-            flex-wrap: wrap;
+            align-items: start;
         }
 
         /* Product Gallery */
         .product-gallery {
-            width: 500px;
-            flex-shrink: 0;
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -213,6 +212,21 @@ img {
             height: 100%;
             object-fit: cover;
             transition: transform var(--transition-speed) ease;
+        }
+
+        /* Sliding wrapper for smooth transitions */
+        .image-slide-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 350ms ease;
+        }
+
+        .slide-image {
+            flex: 0 0 100%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* Image navigation arrows */
@@ -289,7 +303,6 @@ img {
 
         /* Product Details */
         .product-details {
-            flex-grow: 1;
             padding: 2rem;
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -297,23 +310,135 @@ img {
             display: flex;
             flex-direction: column;
         }
+        
+        /* Size Guide Column (Desktop) */
+        .size-guide-column {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            position: sticky;
+            top: 90px;
+            align-self: stretch;
+            height: fit-content;
+            min-height: 600px;
+        }
+        
+        .size-guide-column h3 {
+            font-size: 0.8rem;
+            color: var(--product-accent);
+            margin: 0;
+            padding: 0.3rem 0;
+            text-align: center;
+        }
+        
+        .size-guide-column img {
+            width: 500px;
+            /* height: auto; */
+            /* min-height: 500px; */
+            /* object-fit: cover; */
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Mobile Size Guide Button */
+        .size-guide-mobile-btn {
+            display: none;
+            background: linear-gradient(135deg, var(--product-accent), #007acc);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,210,255,0.3);
+            transition: all 0.3s ease;
+            align-self: flex-end;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .size-guide-mobile-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .size-guide-mobile-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* Size Guide Modal */
+        .size-guide-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .size-guide-modal.active {
+            display: flex;
+        }
+        
+        .size-guide-modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .size-guide-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--product-accent);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+        
+        .size-guide-modal-content img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
 
         .product-header {
             position: relative;
         }
 
         .product-title {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 0.75rem;
+            font-family: 'Poppins', 'Montserrat', sans-serif;
+            font-weight: 300;
             margin-bottom: 0.5rem;
-            color: var(--text);
+            color: var(--product-accent);
             display: block;
+            text-align: center;
         }
 
         .details-toggle {
             background: none;
             border: none;
-            color: var(--product-accent);
+            color: #f60f0f;
             cursor: pointer;
             font-size: 0.9rem;
             margin-bottom: 1rem;
@@ -321,6 +446,7 @@ img {
             align-items: center;
             gap: 0.5rem;
             padding: 0;
+            font-weight: bold;
         }
 
         .details-toggle i {
@@ -377,6 +503,7 @@ img {
             display: flex;
             flex-direction: row;
             align-items: center;
+            justify-content: center;
             gap: 20px;
         }
 
@@ -457,6 +584,7 @@ img {
             display: flex;
             gap: 15px;
             align-items: center;
+            justify-content: center;
         }
 
         .details-toggle2 i {
@@ -492,6 +620,20 @@ img {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        /* Make size selector box visibly selected once a size is chosen */
+        #sizeSelect.has-selection .select-header {
+            border-color: var(--product-accent);
+            background-color: rgba(0, 210, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.15);
+        }
+        
+        /* Make color selector box visibly selected once a color is chosen */
+        #colorSelect.has-selection .select-header {
+            border-color: var(--product-accent);
+            background-color: rgba(0, 210, 255, 0.1);
+            box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.15);
         }
 
         .select-options {
@@ -681,6 +823,96 @@ img {
         .instagram { background-color: #e1306c; }
         .whatsapp { background-color: #25D366; }
 
+        /* Zoom Button */
+        .zoom-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background-color: rgba(0, 210, 255, 0.9);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.0rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 6;
+        }
+
+        .zoom-btn:hover {
+            background-color: rgba(0, 210, 255, 1);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0,210,255,0.5);
+        }
+
+        /* Zoom Modal */
+        .zoom-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .zoom-modal.active {
+            display: flex;
+        }
+
+        .zoom-modal-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-modal-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+        }
+
+        .zoom-modal-image.zoomed {
+            cursor: zoom-out;
+            transform: scale(1.5);
+        }
+
+        .zoom-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10000;
+        }
+
+        .zoom-close-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
         /* Favorite Button */
         .favorite-btn {
             background: none;
@@ -689,10 +921,7 @@ img {
             font-size: 1.5rem;
             color: var(--text-secondary);
             transition: all var(--transition-speed) ease;
-            padding: 0.5rem;
-            position: absolute;
-            top: 0;
-            right: 0;
+            align-items: center;
         }
 
         .favorite-btn:hover {
@@ -701,6 +930,14 @@ img {
 
         .favorite-btn.active {
             color: var(--product-danger);
+        }
+
+        .fav-section {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.8rem;
+            justify-content: center;
         }
 
         /* Custom Notification */
@@ -819,6 +1056,23 @@ img {
                 width: 400px;
             }
         }
+        
+        @media (max-width: 1024px) {
+            .product-grid {
+                grid-template-columns: 450px 1fr;
+                gap: 1.5rem;
+            }
+            
+            /* Hide desktop size guide column on tablet */
+            .size-guide-column {
+                display: none;
+            }
+            
+            /* Show mobile size guide button on tablet */
+            .size-guide-mobile-btn {
+                display: block;
+            }
+        }
 
         @media (max-width: 768px) {
             .main-product-container {
@@ -833,14 +1087,23 @@ img {
             width: 100%;
         }
             .product-grid {
-                flex-direction: column;
-                gap: 2rem;
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
             
             .product-gallery {
-                width: 100%;
                 max-width: 500px;
                 margin: 0 auto;
+            }
+            
+            /* Hide desktop size guide column on mobile */
+            .size-guide-column {
+                display: none;
+            }
+            
+            /* Show mobile size guide button */
+            .size-guide-mobile-btn {
+                display: block;
             }
             
             .product-title {
@@ -861,7 +1124,7 @@ img {
             }
             
             .thumbnail {
-                width: 60px;
+                width: 100%;
                 height: 60px;
             }
         }
@@ -1094,18 +1357,31 @@ img {
         </div>
     </div>
 
+    <!-- Zoom Modal -->
+    <div class="zoom-modal" id="zoomModal">
+        <div class="zoom-modal-content">
+            <img id="zoomModalImage" class="zoom-modal-image" alt="Product zoom">
+            <button class="zoom-close-btn" onclick="closeZoomModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
     <div class="main-product-container">
         <div class="product-layout">
             <div class="product-grid">
                 <!-- Product Gallery -->
                 <div class="product-gallery">
-                    <div class="main-image-container">
+                    <div class="main-image-container" id="mainImageContainer">
                         <img id="mainImage" src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image">
                         <button class="image-nav-btn prev-btn" id="prevBtn" onclick="navigateImage(-1)">
                             <i class="fas fa-chevron-left"></i>
                         </button>
                         <button class="image-nav-btn next-btn" id="nextBtn" onclick="navigateImage(1)">
                             <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="zoom-btn" id="zoomBtn" onclick="openZoomModal()">
+                            <i class="fas fa-search-plus"></i>
                         </button>
                     </div>
                     <div class="thumbnail-container">
@@ -1125,26 +1401,33 @@ img {
                 <div class="product-details">
                     <div class="product-header">
                         <div style="position: relative;">
-                            <h1 class="product-title" id="productTitle"><?php echo htmlspecialchars($product['name']); ?></h1>
+                            <div class="fav-section">
+                                <div>
+                                    <h1 class="product-title" id="productTitle"><?php echo htmlspecialchars($product['name']); ?></h1>
+                                </div>
+                                <!-- <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
+                                    <i class="far fa-heart"></i>
+                                </button> -->
+                            </div>
                             <div class="banner">
                                 <button class="details-toggle" id="detailsToggle" onclick="toggleDetails()">
                                     <span>See Product Details</span>
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
-                                <button class="shipping-toggle" id="shippingToggle" onclick="toggleShipping()">
+                                <!-- <button class="shipping-toggle" id="shippingToggle" onclick="toggleShipping()">
                                     <span>Shipping Policy</span>
                                     <i class="fas fa-chevron-down"></i>
                                 </button>
                                 <button class="return-toggle" id="returnToggle" onclick="toggleReturn()">
                                     <span>Return Policy</span>
                                     <i class="fas fa-chevron-down"></i>
-                                </button>
+                                </button> -->
                             </div>
-                            <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
+                            <!-- <button class="favorite-btn" id="favoriteBtn" onclick="toggleFavorite()">
                                 <i class="far fa-heart"></i>
-                            </button>
+                            </button> -->
                         </div>
-                        <span class="product-category"><?php echo htmlspecialchars($product['category'] ?: 'Premium'); ?></span>
+                        <!-- <span class="product-category"><?php echo htmlspecialchars($product['category'] ?: 'Premium'); ?></span> -->
                         <div class="price-stock">
                             <div class="product-price">Ksh <?php echo number_format($product['price_ksh'], 2); ?></div>
                             <div><?php echo $stock_badge; ?></div>
@@ -1162,7 +1445,7 @@ img {
                         </div>
                     </div>
 
-                    <div id="shippingPolicy" style="display: none;">
+                    <!-- <div id="shippingPolicy" style="display: none;">
                         <h3 class="title-product">Shipping Policy</h3>
                         <p>
                             ◆ Shipping Days: Tuesday, Thursday, and Saturday.<br>
@@ -1196,7 +1479,7 @@ img {
                                 <i class="fas fa-chevron-up"></i>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                     
                     <div class="product-actions" id="productActions">
                         <!-- Color Selection -->
@@ -1216,11 +1499,16 @@ img {
                         </div>
                         <?php endif; ?>
                         
+                        <!-- Mobile Size Guide Button (appears between color and size on mobile) -->
+                        <button class="size-guide-mobile-btn" onclick="openSizeGuideModal()">
+                            <i class="fas fa-ruler"></i> Size Guide
+                        </button>
+                        
                         <!-- Size Selection -->
                         <?php if (!empty($sizes)): ?>
                         <div class="custom-select" id="sizeSelect">
                             <div class="select-header" onclick="toggleSelect('sizeSelect')">
-                                <span id="sizeSelectValue">Select Size</span>
+                                <span id="sizeSelectValue">Select Your Size</span>
                                 <i class="fas fa-chevron-down"></i>
                             </div>
                             <div class="select-options">
@@ -1250,14 +1538,29 @@ img {
                             </button>
 
                             <!-- smart home link as secondary action -->
-                            <a href="index.php" class="btn btn-secondary home-link">
+                            <!-- <a href="index.php" class="btn btn-secondary home-link">
                                 <i class="fas fa-home"></i> Home
-                            </a>
+                            </a> -->
                         </div>
                     </div>
                 </div>
+                
+                <!-- Size Guide Column (Desktop Only) -->
+                <div class="size-guide-column">
+                    <h3>Size Guide</h3>
+                    <img src="size_Guide.jpeg" alt="Size Guide" onerror="this.onerror=null; this.src='uploads/size_Guide.jpeg';">
+                </div>
             </div>
             
+            <!-- Size Guide Modal (Mobile) -->
+            <div class="size-guide-modal" id="sizeGuideModal" onclick="closeSizeGuideModal()">
+                <div class="size-guide-modal-content" onclick="event.stopPropagation()">
+                    <button class="size-guide-modal-close" onclick="closeSizeGuideModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <img src="size_Guide.jpeg" alt="Size Guide" onerror="this.onerror=null; this.src='uploads/size_Guide.jpeg';">
+                </div>
+            </div>
 
                   <!-- Related Products Section -->
 <?php if ($related_result->num_rows > 0): ?>
@@ -1400,6 +1703,32 @@ img {
                     allImages.push("uploads/<?php echo htmlspecialchars($image); ?>");
                 <?php endif; ?>
             <?php endforeach; ?>
+
+            // Build sliding wrapper and populate images for smooth transitions
+            const mainImageContainerElem = document.getElementById('mainImageContainer');
+            if (mainImageContainerElem) {
+                // remove existing single main image if present
+                const existingMain = mainImageContainerElem.querySelector('#mainImage');
+                if (existingMain) existingMain.remove();
+
+                const slideWrapper = document.createElement('div');
+                slideWrapper.className = 'image-slide-wrapper';
+                allImages.forEach((src, idx) => {
+                    const imgEl = document.createElement('img');
+                    imgEl.src = src;
+                    imgEl.className = 'slide-image';
+                    imgEl.alt = '<?php echo addslashes($product['name']); ?>';
+                    slideWrapper.appendChild(imgEl);
+                });
+
+                // insert wrapper before prev button if available, otherwise append
+                const prevBtnElem = document.getElementById('prevBtn');
+                if (prevBtnElem) {
+                    mainImageContainerElem.insertBefore(slideWrapper, prevBtnElem);
+                } else {
+                    mainImageContainerElem.appendChild(slideWrapper);
+                }
+            }
             
             // Hide navigation buttons if only one image
             if (allImages.length <= 1) {
@@ -1411,33 +1740,70 @@ img {
                 document.getElementById('prevBtn').style.display = 'none';
                 document.getElementById('nextBtn').style.display = 'flex';
             }
+
+            // Add touch swipe functionality for mobile
+            const mainImageContainer = document.getElementById('mainImageContainer');
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            mainImageContainer.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+
+            mainImageContainer.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+
+            function handleSwipe() {
+                const swipeThreshold = 50; // Minimum distance to trigger swipe
+                const diff = touchStartX - touchEndX;
+
+                if (Math.abs(diff) > swipeThreshold) {
+                    if (diff > 0) {
+                        // Swiped left - show next image
+                        navigateImage(1);
+                    } else {
+                        // Swiped right - show previous image
+                        navigateImage(-1);
+                    }
+                }
+            }
         });
         
+        
+        // Smooth slide navigation using wrapper
         function navigateImage(direction) {
             currentImageIndex += direction;
-            
+
             // Clamp instead of wrapping around
             if (currentImageIndex < 0) {
                 currentImageIndex = 0;
             } else if (currentImageIndex >= allImages.length) {
                 currentImageIndex = allImages.length - 1;
             }
-            
-            // Update main image
-            document.getElementById('mainImage').src = allImages[currentImageIndex];
-            
+
+            // Update sliding wrapper position
+            const wrapper = document.querySelector('.image-slide-wrapper');
+            if (wrapper) {
+                wrapper.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+            } else {
+                // fallback: update mainImage src
+                const mainImg = document.getElementById('mainImage');
+                if (mainImg) mainImg.src = allImages[currentImageIndex];
+            }
+
             // Update thumbnail active state
             document.querySelectorAll('.thumbnail').forEach((thumb, index) => {
-                thumb.classList.remove('active');
-                if (index === currentImageIndex) {
-                    thumb.classList.add('active');
-                }
+                thumb.classList.toggle('active', index === currentImageIndex);
             });
-            
+
             // Update button visibility based on current position
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
-            
+
+            if (!prevBtn || !nextBtn) return;
+
             // First image: show only next button
             if (currentImageIndex === 0) {
                 prevBtn.style.display = 'none';
@@ -1455,6 +1821,47 @@ img {
             }
         }
 
+        // Zoom Modal Functions
+        function openZoomModal() {
+            const zoomModal = document.getElementById('zoomModal');
+            const zoomModalImage = document.getElementById('zoomModalImage');
+            // Use the currently visible image from the slider
+            zoomModalImage.src = allImages[currentImageIndex] || allImages[0] || '';
+            zoomModal.classList.add('active');
+        }
+        function closeZoomModal() {
+            const zoomModal = document.getElementById('zoomModal');
+            zoomModal.classList.remove('active');
+            // Reset zoom level
+            const zoomModalImage = document.getElementById('zoomModalImage');
+            zoomModalImage.classList.remove('zoomed');
+        }
+
+        // Toggle zoom on modal image click - add to existing DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const zoomModalImage = document.getElementById('zoomModalImage');
+            if (zoomModalImage) {
+                zoomModalImage.addEventListener('click', function() {
+                    this.classList.toggle('zoomed');
+                });
+
+                // Close modal by clicking outside the image
+                const zoomModal = document.getElementById('zoomModal');
+                zoomModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeZoomModal();
+                    }
+                });
+            }
+        });
+
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeZoomModal();
+            }
+        });
+
         // Toggle product details view
         function toggleDetails() {
             const toggleBtn = document.getElementById('detailsToggle');
@@ -1463,29 +1870,32 @@ img {
             const title = document.querySelector(".product-title");
             const price = document.querySelector(".price-stock");
             const toggle = document.querySelector(".details-toggle");
-            const detailsBtn = document.querySelector(".shipping-toggle");
-            const detailsBtn2 = document.querySelector(".return-toggle");
+            const like = document.getElementById('favoriteBtn');
+            // const detailsBtn = document.querySelector(".shipping-toggle");
+            // const detailsBtn2 = document.querySelector(".return-toggle");
             const category = document.querySelector(".product-category");
 
             if (description.style.display === 'none') {
-                title.style.display = 'none';
-                price.style.display = 'none';
-                toggle.style.display = 'none';
-                detailsBtn.style.display = 'none';
-                detailsBtn2.style.display = 'none';
-                category.style.display = 'none';
+                if (title) title.style.display = 'none';
+                if (price) price.style.display = 'none';
+                if (toggle) toggle.style.display = 'none';
+                if (like) like.style.display = 'none';
+                // detailsBtn.style.display = 'none';
+                // detailsBtn2.style.display = 'none';
+                if (category) category.style.display = 'none';
                 description.style.display = 'block';
                 actions.classList.add('hidden');
                 // toggleBtn.innerHTML = '<span>Hide Details</span><i class="fas fa-chevron-up"></i>';
                 toggleBtn.classList.add('active');
             } else {
-                title.style.display = 'block';
-                price.style.display = 'block';
-                toggle.style.display = 'block';
+                if (title) title.style.display = 'block';
+                if (price) price.style.display = 'block';
+                if (toggle) toggle.style.display = 'block';
+                if (like) like.style.display = 'block';
                 // restore the other policy buttons when details are closed
-                detailsBtn.style.display = 'flex';
-                detailsBtn2.style.display = 'flex';
-                category.style.display = 'block';
+                // detailsBtn.style.display = 'flex';
+                // detailsBtn2.style.display = 'flex';
+                if (category) category.style.display = 'block';
                 description.style.display = 'none';
                 actions.classList.remove('hidden');
                 // toggleBtn.innerHTML = '<span>See Details</span><i class="fas fa-chevron-down"></i>';
@@ -1494,78 +1904,78 @@ img {
         }
 
                 // Toggle shipping policy view
-        function toggleShipping() {
-            const toggleBtn = document.getElementById('shippingToggle');
-            const description = document.getElementById('shippingPolicy');
-            const actions = document.getElementById('productActions');
-            const title = document.querySelector(".product-title");
-            const price = document.querySelector(".price-stock");
-            const detailsBtn = document.querySelector(".shipping-toggle");
-            const detailsBtn2 = document.querySelector(".return-toggle");
-            const toggle = document.querySelector(".details-toggle");
-            const category = document.querySelector(".product-category");
+        // function toggleShipping() {
+        //     const toggleBtn = document.getElementById('shippingToggle');
+        //     const description = document.getElementById('shippingPolicy');
+        //     const actions = document.getElementById('productActions');
+        //     const title = document.querySelector(".product-title");
+        //     const price = document.querySelector(".price-stock");
+        //     const detailsBtn = document.querySelector(".shipping-toggle");
+        //     const detailsBtn2 = document.querySelector(".return-toggle");
+        //     const toggle = document.querySelector(".details-toggle");
+        //     const category = document.querySelector(".product-category");
 
-            if (description.style.display === 'none') {
-                title.style.display = 'none';
-                price.style.display = 'none';
-                // hide both other policy/detail toggles while shipping is shown
-                detailsBtn.style.display = 'none';
-                detailsBtn2.style.display = 'none';
-                toggle.style.display = 'none';
-                category.style.display = 'none';
-                description.style.display = 'block';
-                actions.classList.add('hidden');
-                toggleBtn.classList.add('active');
-            } else {
-                title.style.display = 'block';
-                price.style.display = 'block';
-                // restore other toggles
-                detailsBtn.style.display = 'flex';
-                detailsBtn2.style.display = 'flex';
-                toggle.style.display = 'block';
-                category.style.display = 'block';
-                description.style.display = 'none';
-                actions.classList.remove('hidden');
-                toggleBtn.classList.remove('active');
-            }
-        }
+        //     if (description.style.display === 'none') {
+        //         title.style.display = 'none';
+        //         price.style.display = 'none';
+        //         // hide both other policy/detail toggles while shipping is shown
+        //         detailsBtn.style.display = 'none';
+        //         detailsBtn2.style.display = 'none';
+        //         toggle.style.display = 'none';
+        //         category.style.display = 'none';
+        //         description.style.display = 'block';
+        //         actions.classList.add('hidden');
+        //         toggleBtn.classList.add('active');
+        //     } else {
+        //         title.style.display = 'block';
+        //         price.style.display = 'block';
+        //         // restore other toggles
+        //         detailsBtn.style.display = 'flex';
+        //         detailsBtn2.style.display = 'flex';
+        //         toggle.style.display = 'block';
+        //         category.style.display = 'block';
+        //         description.style.display = 'none';
+        //         actions.classList.remove('hidden');
+        //         toggleBtn.classList.remove('active');
+        //     }
+        // }
 
-                // Toggle return policy view
-        function toggleReturn() {
-            const toggleBtn = document.getElementById('returnToggle');
-            const description = document.getElementById('returnPolicy');
-            const actions = document.getElementById('productActions');
-            const title = document.querySelector(".product-title");
-            const price = document.querySelector(".price-stock");
-            const detailsBtn2 = document.querySelector(".return-toggle");
-            const detailsBtn = document.querySelector(".shipping-toggle");
-            const toggle = document.querySelector(".details-toggle");
-            const category = document.querySelector(".product-category");
+        //         // Toggle return policy view
+        // function toggleReturn() {
+        //     const toggleBtn = document.getElementById('returnToggle');
+        //     const description = document.getElementById('returnPolicy');
+        //     const actions = document.getElementById('productActions');
+        //     const title = document.querySelector(".product-title");
+        //     const price = document.querySelector(".price-stock");
+        //     const detailsBtn2 = document.querySelector(".return-toggle");
+        //     const detailsBtn = document.querySelector(".shipping-toggle");
+        //     const toggle = document.querySelector(".details-toggle");
+        //     const category = document.querySelector(".product-category");
 
-            if (description.style.display === 'none') {
-                title.style.display = 'none';
-                price.style.display = 'none';
-                // hide both detail and shipping toggles while return info is shown
-                detailsBtn2.style.display = 'none';
-                detailsBtn.style.display = 'none';
-                toggle.style.display = 'none';
-                category.style.display = 'none';
-                description.style.display = 'block';
-                actions.classList.add('hidden');
-                toggleBtn.classList.add('active');
-            } else {
-                title.style.display = 'block';
-                price.style.display = 'block';
-                // restore toggles
-                detailsBtn2.style.display = 'flex';
-                detailsBtn.style.display = 'flex';
-                toggle.style.display = 'block';
-                category.style.display = 'block';
-                description.style.display = 'none';
-                actions.classList.remove('hidden');
-                toggleBtn.classList.remove('active');
-            }
-        }
+        //     if (description.style.display === 'none') {
+        //         title.style.display = 'none';
+        //         price.style.display = 'none';
+        //         // hide both detail and shipping toggles while return info is shown
+        //         detailsBtn2.style.display = 'none';
+        //         detailsBtn.style.display = 'none';
+        //         toggle.style.display = 'none';
+        //         category.style.display = 'none';
+        //         description.style.display = 'block';
+        //         actions.classList.add('hidden');
+        //         toggleBtn.classList.add('active');
+        //     } else {
+        //         title.style.display = 'block';
+        //         price.style.display = 'block';
+        //         // restore toggles
+        //         detailsBtn2.style.display = 'flex';
+        //         detailsBtn.style.display = 'flex';
+        //         toggle.style.display = 'block';
+        //         category.style.display = 'block';
+        //         description.style.display = 'none';
+        //         actions.classList.remove('hidden');
+        //         toggleBtn.classList.remove('active');
+        //     }
+        // }
 
         // Change main image when thumbnail is clicked
         function changeImage(element, newSrc) {
@@ -1577,16 +1987,23 @@ img {
             // Add active class to clicked thumbnail
             element.classList.add('active');
             
-            // Change main image
-            document.getElementById('mainImage').src = newSrc;
-            
-            // Update current image index based on thumbnail clicked
-            const thumbnails = document.querySelectorAll('.thumbnail');
-            thumbnails.forEach((thumb, index) => {
-                if (thumb === element) {
-                    currentImageIndex = index;
-                }
-            });
+            // Determine index of the newSrc in allImages
+            let idx = allImages.indexOf(newSrc);
+            if (idx === -1) {
+                // fallback: try to match by filename
+                idx = allImages.findIndex(src => src.endsWith(newSrc) || newSrc.endsWith(src));
+            }
+            if (idx === -1) idx = 0;
+            currentImageIndex = idx;
+
+            // Move the sliding wrapper
+            const wrapper = document.querySelector('.image-slide-wrapper');
+            if (wrapper) {
+                wrapper.style.transform = `translateX(-${currentImageIndex * 100}%)`;
+            } else {
+                const mainImg = document.getElementById('mainImage');
+                if (mainImg) mainImg.src = allImages[currentImageIndex];
+            }
         }
         
         // Toggle select dropdown
@@ -1606,6 +2023,14 @@ img {
             
             // Update select value
             document.getElementById(`${selectId}Value`).textContent = value;
+
+            // Highlight selector box after choosing option
+            if (selectId === 'sizeSelect') {
+                document.getElementById('sizeSelect').classList.add('has-selection');
+            }
+            if (selectId === 'colorSelect') {
+                document.getElementById('colorSelect').classList.add('has-selection');
+            }
             
             // Close dropdown
             document.getElementById(selectId).classList.remove('select-open');
@@ -1672,17 +2097,44 @@ img {
                 return;
             <?php endif; ?>
             
+            // Check if color is selected (required if color options exist)
+            const colorSelectElement = document.getElementById('colorSelect');
+            if (colorSelectElement) {
+                const selectedColor = document.querySelector('#colorSelect .select-option.active') ? 
+                    document.querySelector('#colorSelect .select-option.active').textContent : '';
+                
+                if (!selectedColor) {
+                    showCustomNotification(
+                        'Please select a color',
+                        'Color selection is required',
+                        'error'
+                    );
+                    return;
+                }
+            }
+            
+            // Check if size is selected (required)
+            const selectedSize = document.querySelector('#sizeSelect .select-option.active') ? 
+                document.querySelector('#sizeSelect .select-option.active').textContent : '';
+            
+            if (!selectedSize) {
+                showCustomNotification(
+                    'Please select a size',
+                    'Size selection is required',
+                    'error'
+                );
+                return;
+            }
+            
             const productId = <?php echo $product_id; ?>;
             const productName = "<?php echo addslashes($product['name']); ?>";
             const price = <?php echo $product['price_ksh']; ?>;
             const image = "<?php echo $product['image']; ?>";
             const quantity = parseInt(document.querySelector('.quantity-value').textContent);
             
-            // Get selected color and size
+            // Get selected color
             const selectedColor = document.querySelector('#colorSelect .select-option.active') ? 
                 document.querySelector('#colorSelect .select-option.active').textContent : '';
-            const selectedSize = document.querySelector('#sizeSelect .select-option.active') ? 
-                document.querySelector('#sizeSelect .select-option.active').textContent : '';
             
             // Create FormData object
             const formData = new FormData();
@@ -1707,9 +2159,20 @@ img {
                         'Your cart has been updated',
                         'success'
                     );
-                    // Update cart count in header
-                    if (document.getElementById('cartCount')) {
+                    // Keep header cart badge in sync when header helpers are available.
+                    if (typeof updateCartCountDisplay === 'function') {
+                        updateCartCountDisplay(parseInt(data.cartCount, 10) || 0);
+                    } else if (document.getElementById('cartCount')) {
                         document.getElementById('cartCount').textContent = data.cartCount;
+                    }
+
+                    // Automatically open "Your Cart" panel after adding an item.
+                    const cartModal = document.getElementById('cartModal');
+                    if (cartModal) {
+                        cartModal.classList.add('active');
+                        if (typeof loadCartItems === 'function') {
+                            loadCartItems();
+                        }
                     }
                 } else {
                     showCustomNotification(
@@ -1923,6 +2386,33 @@ img {
             });
         });
         <?php endif; ?>
+        
+        // Size Guide Modal Functions
+        function openSizeGuideModal() {
+            const modal = document.getElementById('sizeGuideModal');
+            if (modal) {
+                modal.classList.add('active');
+                // Prevent body scroll when modal is open
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        function closeSizeGuideModal() {
+            const modal = document.getElementById('sizeGuideModal');
+            if (modal) {
+                modal.classList.remove('active');
+                // Re-enable body scroll
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSizeGuideModal();
+            }
+        });
+        
         // [Remaining JavaScript functions stay the same]
     </script>
     

@@ -20,6 +20,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 $email = trim($input['email'] ?? '');
 $name = trim($input['name'] ?? '');
 $phone = trim($input['phone'] ?? '');
+$phone2 = trim($input['phone2'] ?? '');
 $address = trim($input['address'] ?? '');
 $amount = floatval($input['amount'] ?? 0);
 $shippingMethod = $input['shipping_method'] ?? 'Standard';
@@ -54,7 +55,7 @@ $orderItemsJson = json_encode($orderItemsArray);
 try {
     $stmt = $pdo->prepare("
         INSERT INTO mycheckout 
-        (client_id, session_id, customer_name, customer_email, customer_phone, 
+        (client_id, session_id, customer_name, customer_email, customer_phone, customer_phone2,
          shipping_address, payment_method, order_total, order_items, status) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
     ");
@@ -70,6 +71,7 @@ try {
         $name,
         $email,
         $phone,
+        $phone2 ?: null,
         $fullAddress,
         $paymentMethod,
         $amount,

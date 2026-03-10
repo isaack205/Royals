@@ -15,8 +15,15 @@ if ($order_id === 0) {
     die("Invalid customer ID.");
 }
 
-// Fetch order details
-$order_query = "SELECT * FROM orders_made WHERE id = $order_id";
+// Fetch order details from mycheckout table
+$order_query = "SELECT *, 
+                customer_name as name, 
+                customer_email as email, 
+                customer_phone as phone,
+                customer_phone2 as phone2,
+                shipping_address as location,
+                created_at as order_date 
+                FROM mycheckout WHERE id = $order_id";
 $order_result = $connection->query($order_query);
 
 if (!$order_result || $order_result->num_rows === 0) {
@@ -25,19 +32,12 @@ if (!$order_result || $order_result->num_rows === 0) {
 
 $order = $order_result->fetch_assoc();
 
-// Fetch order items with product details including images
+// Parse order items from JSON in mycheckout table
 $order_items = [];
-$order_details_query = "
-    SELECT od.*, p.name as product_name, p.image as product_image 
-    FROM order_details od 
-    LEFT JOIN products p ON od.product_id = p.id 
-    WHERE od.order_id = $order_id
-";
-$order_details_result = $connection->query($order_details_query);
-
-if ($order_details_result && $order_details_result->num_rows > 0) {
-    while ($item = $order_details_result->fetch_assoc()) {
-        $order_items[] = $item;
+if (!empty($order['order_items'])) {
+    $items = json_decode($order['order_items'], true);
+    if (is_array($items)) {
+        $order_items = $items;
     }
 }
 
@@ -80,7 +80,7 @@ include('adminheader.php');
         }
         
         .customer-container {
-            max-width: 1200px;
+            max-width: 1440px;
             margin: 0 auto;
             padding: 2rem;
             margin-top: 70px; /* Account for fixed header */
@@ -130,10 +130,37 @@ include('adminheader.php');
         .customer-card {
             background-color: var(--card-bg);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 2.2rem;
             margin-bottom: 2rem;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--border-color);
+        }
+
+        .meta-strip {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .meta-chip {
+            background: rgba(0, 210, 255, 0.08);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 10px;
+            padding: 0.8rem 0.9rem;
+        }
+
+        .meta-chip .meta-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .meta-chip .meta-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
         }
         
         .card-header {
@@ -361,6 +388,10 @@ include('adminheader.php');
             .action-buttons {
                 flex-direction: column;
             }
+
+            .meta-strip {
+                grid-template-columns: 1fr;
+            }
             
             .items-table {
                 display: block;
@@ -394,12 +425,197 @@ include('adminheader.php');
         .customer-card {
             animation: fadeIn 0.6s ease-out;
         }
+
+        /* Print Styles */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                margin: 0;
+            }
+
+            .customer-container {
+                position: static;
+                max-width: none;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: visible !important;
+            }
+
+            /* Print only the document content */
+            body * {
+                visibility: hidden !important;
+            }
+
+            .customer-container,
+            .customer-container * {
+                visibility: visible !important;
+            }
+
+            /* Hide non-printable elements */
+            .back-btn,
+            .action-buttons,
+            .no-print {
+                display: none !important;
+            }
+
+            /* Hide screen page header/footer-like UI in print */
+            .page-header {
+                display: none !important;
+            }
+
+            /* Print header - Company Info */
+            .print-only {
+                display: block !important;
+            }
+
+            .invoice-header {
+                text-align: center;
+                margin-bottom: 0.6rem;
+                padding-bottom: 0.45rem;
+                border-bottom: 2px solid #000;
+            }
+
+            .invoice-header h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0.35rem;
+                color: #000;
+            }
+
+            .invoice-header p {
+                margin: 0.2rem 0;
+                color: #333;
+            }
+
+            .page-header {
+                border-bottom: 2px solid #000;
+            }
+
+            .page-header h1 {
+                color: #000;
+            }
+
+            .customer-card {
+                box-shadow: none;
+                border: 1px solid #000;
+                page-break-inside: auto;
+                break-inside: auto;
+                border-radius: 0;
+                padding: 1rem;
+                margin-bottom: 0;
+            }
+
+            .meta-strip,
+            .info-grid,
+            .order-items {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+
+            .card-title {
+                color: #000;
+            }
+
+            .info-label {
+                color: #555;
+            }
+
+            .info-value {
+                color: #000;
+            }
+
+            .items-table th {
+                background: #f0f0f0 !important;
+                color: #000 !important;
+                border: 1px solid #000;
+                font-size: 11px;
+                padding: 6px;
+            }
+
+            .items-table td {
+                border: 1px solid #000;
+                color: #000;
+                font-size: 10px;
+                padding: 6px;
+                vertical-align: top;
+                overflow-wrap: anywhere;
+            }
+
+            .items-table {
+                width: 100%;
+                table-layout: fixed;
+                display: table !important;
+                overflow: visible !important;
+            }
+
+            .items-table thead {
+                display: table-header-group;
+            }
+
+            .items-table tfoot {
+                display: table-footer-group;
+            }
+
+            .status-badge {
+                border: 1px solid #000;
+                color: #000 !important;
+                background: transparent !important;
+            }
+
+            .order-id {
+                border: 1px solid #000;
+                color: #000 !important;
+                background: transparent !important;
+            }
+
+            .meta-chip {
+                background: #f7f7f7 !important;
+                border: 1px solid #ccc;
+            }
+
+            .meta-chip .meta-value {
+                color: #000;
+            }
+
+            tr {
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        .product-variant {
+            display: inline-block;
+            margin-top: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(0, 210, 255, 0.1);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--accent);
+        }
     </style>
 </head>
 <body>
     <div class="customer-container">
+        <!-- Print-only invoice header -->
+        <div class="invoice-header print-only">
+            <h1>ROYALS</h1>
+            <p><strong>INVOICE / ORDER DETAILS</strong></p>
+            <p>Phone: +254 777 992 666 | Email: info@royals.com</p>
+            <p>Generated: <?php echo date('F j, Y, g:i a'); ?></p>
+        </div>
+
         <div class="page-header">
-            <h1><i class="fas fa-user-circle"></i> Customer Details</h1>
+            <h1><i class="fas fa-user-circle"></i> Order Details</h1>
             <a href="orders_made.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Orders</a>
         </div>
         
@@ -407,6 +623,21 @@ include('adminheader.php');
             <div class="card-header">
                 <h2 class="card-title"><i class="fas fa-receipt"></i> Order Information</h2>
                 <span class="order-id">Order #<?php echo $order['id']; ?></span>
+            </div>
+
+            <div class="meta-strip">
+                <div class="meta-chip">
+                    <span class="meta-label">Payment Method</span>
+                    <span class="meta-value"><?php echo htmlspecialchars($order['payment_method'] ?? 'N/A'); ?></span>
+                </div>
+                <div class="meta-chip">
+                    <span class="meta-label">Order Status</span>
+                    <span class="meta-value"><?php echo htmlspecialchars(ucfirst($order['status'] ?? 'pending')); ?></span>
+                </div>
+                <div class="meta-chip">
+                    <span class="meta-label">Order Total</span>
+                    <span class="meta-value">KSH <?php echo number_format(floatval($order['order_total'] ?? 0), 2); ?></span>
+                </div>
             </div>
             
             <div class="info-grid">
@@ -422,7 +653,14 @@ include('adminheader.php');
                 
                 <div class="info-item">
                     <span class="info-label">Phone Number</span>
-                    <span class="info-value"><?php echo htmlspecialchars($order['phone']); ?></span>
+                    <span class="info-value">
+                        <?php 
+                        echo htmlspecialchars($order['phone']); 
+                        if (!empty($order['phone2'])) {
+                            echo '<br><small style="color: #8b92a7; font-size: 0.9em;">Alt: ' . htmlspecialchars($order['phone2']) . '</small>';
+                        }
+                        ?>
+                    </span>
                 </div>
                 
                 <div class="info-item">
@@ -437,7 +675,16 @@ include('adminheader.php');
                 
                 <div class="info-item">
                     <span class="info-label">Order Status</span>
-                    <span class="status-badge status-pending">Pending</span>
+                    <?php
+                    $status = strtolower($order['status'] ?? 'pending');
+                    $statusClass = 'status-pending';
+                    if ($status === 'paid' || $status === 'completed') {
+                        $statusClass = 'status-completed';
+                    } elseif ($status === 'cancelled') {
+                        $statusClass = 'status-cancelled';
+                    }
+                    ?>
+                    <span class="status-badge <?php echo $statusClass; ?>"><?php echo htmlspecialchars(ucfirst($status)); ?></span>
                 </div>
             </div>
             
@@ -449,8 +696,7 @@ include('adminheader.php');
                         <thead>
                             <tr>
                                 <th>Product</th>
-                                <th>Color</th>
-                                <th>Size</th>
+                                <th>Variant</th>
                                 <th>Quantity</th>
                                 <th>Price</th>
                                 <th>Total</th>
@@ -460,70 +706,67 @@ include('adminheader.php');
                             <?php 
                             $subtotal = 0;
                             foreach ($order_items as $item): 
-                                $item_total = $item['price'] * $item['quantity'];
+                                $itemPrice = floatval($item['price'] ?? 0);
+                                $quantity = intval($item['quantity'] ?? 1);
+                                $item_total = $itemPrice * $quantity;
                                 $subtotal += $item_total;
-                                $imagePath = !empty($item['product_image']) ? 'uploads/' . htmlspecialchars($item['product_image']) : 'https://via.placeholder.com/60x60?text=No+Image';
+                                $imagePath = !empty($item['image']) ? 'uploads/' . htmlspecialchars($item['image']) : 'https://via.placeholder.com/60x60?text=No+Image';
+                                
+                                $size = $item['size'] ?? '';
+                                $color = $item['color'] ?? '';
                             ?>
                                 <tr>
                                     <td>
                                         <div class="product-cell">
-                                            <img src="<?php echo $imagePath; ?>" alt="<?php echo htmlspecialchars($item['product_name']); ?>" class="product-image" onerror="this.src='https://via.placeholder.com/60x60?text=Image+Error'">
+                                            <img src="<?php echo $imagePath; ?>" alt="<?php echo htmlspecialchars($item['product_name'] ?? 'Product'); ?>" class="product-image" onerror="this.src='https://via.placeholder.com/60x60?text=Image+Error'">
                                             <div class="product-info">
-                                                <span class="product-name"><?php echo htmlspecialchars($item['product_name']); ?></span>
-                                                <span class="product-id">ID: <?php echo $item['product_id']; ?></span>
+                                                <span class="product-name"><?php echo htmlspecialchars($item['product_name'] ?? 'Product'); ?></span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?php echo htmlspecialchars($order['product_color']); ?></td>
-                                    <td><?php echo htmlspecialchars($order['product_size']); ?></td>
-                                    <td><?php echo $item['quantity']; ?></td>
-                                    <td>KSH <?php echo number_format($item['price'], 2); ?></td>
+                                    <td>
+                                        <?php if (!empty($size) || !empty($color)): ?>
+                                            <?php if (!empty($size)): ?>
+                                                <span class="product-variant">Size: <?php echo htmlspecialchars($size); ?></span><br>
+                                            <?php endif; ?>
+                                            <?php if (!empty($color)): ?>
+                                                <span class="product-variant">Color: <?php echo htmlspecialchars($color); ?></span>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <span style="color: #888;">N/A</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo $quantity; ?></td>
+                                    <td>KSH <?php echo number_format($itemPrice, 2); ?></td>
                                     <td>KSH <?php echo number_format($item_total, 2); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                             
                             <tr class="total-row">
-                                <td colspan="5" style="text-align: right;">Subtotal:</td>
-                                <td>KSH <?php echo number_format($subtotal, 2); ?></td>
-                            </tr>
-                            <tr class="total-row">
-                                <td colspan="5" style="text-align: right;">Total:</td>
-                                <td>KSH <?php echo number_format($order['total_price'], 2); ?></td>
+                                <td colspan="4" style="text-align: right;"><strong>Order Total:</strong></td>
+                                <td><strong>KSH <?php echo number_format($order['order_total'] ?? $subtotal, 2); ?></strong></td>
                             </tr>
                         </tbody>
                     </table>
                 <?php else: ?>
                     <div class="empty-state">
                         <i class="fas fa-box-open"></i>
-                        <p>No detailed items found for this order.</p>
-                    </div>
-                    
-                    <div class="info-item" style="margin-top: 1.5rem;">
-                        <span class="info-label">Product Names</span>
-                        <span class="info-value"><?php echo htmlspecialchars($order['product_names']); ?></span>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Product Color</span>
-                        <span class="info-value"><?php echo htmlspecialchars($order['product_color']); ?></span>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Product Size</span>
-                        <span class="info-value"><?php echo htmlspecialchars($order['product_size']); ?></span>
-                    </div>
-                    
-                    <div class="info-item">
-                        <span class="info-label">Total Price</span>
-                        <span class="info-value">KSH <?php echo number_format($order['total_price'], 2); ?></span>
+                        <p>No items found for this order.</p>
                     </div>
                 <?php endif; ?>
             </div>
             
             <div class="action-buttons">
-                <a href="#" class="btn btn-primary"><i class="fas fa-print"></i> Print Invoice</a>
-                <a href="#" class="btn btn-secondary"><i class="fas fa-edit"></i> Edit Order</a>
-                <a href="orders_made.php?remove=<?php echo $order['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this order?');">
+                <p class="no-print" style="margin-right: auto; color: #8b92a7; font-size: 0.86rem; align-self: center;">
+                    Tip: In print settings, disable browser "Headers and footers" for a clean invoice.
+                </p>
+                <button onclick="window.print()" class="btn btn-primary no-print">
+                    <i class="fas fa-print"></i> Print Invoice
+                </button>
+                <a href="orders_made.php" class="btn btn-secondary no-print">
+                    <i class="fas fa-arrow-left"></i> Back to Orders
+                </a>
+                <a href="orders_made.php?remove=<?php echo $order['id']; ?>" class="btn btn-danger no-print" onclick="return confirm('Are you sure you want to delete this order?');">
                     <i class="fas fa-trash"></i> Delete Order
                 </a>
             </div>

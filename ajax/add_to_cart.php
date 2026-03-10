@@ -8,6 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $productName = filter_input(INPUT_POST, 'product_name', FILTER_SANITIZE_STRING);
     $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     $image = filter_input(INPUT_POST, 'image', FILTER_SANITIZE_STRING);
+    $size = filter_input(INPUT_POST, 'size', FILTER_SANITIZE_STRING);
+    $color = filter_input(INPUT_POST, 'color', FILTER_SANITIZE_STRING);
+    $quantity = filter_input(INPUT_POST, 'quantity', FILTER_SANITIZE_NUMBER_INT);
+    $quantity = (int)($quantity ?: 1);
+    if ($quantity < 1) {
+        $quantity = 1;
+    }
     
     if ($productId && $productName && $price) {
         if (!isset($_SESSION['cart'])) {
@@ -16,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $found = false;
         foreach ($_SESSION['cart'] as &$item) {
-            if ($item['product_id'] == $productId) {
-                $item['quantity'] += 1;
+            if ($item['product_id'] == $productId && $item['size'] == $size && $item['color'] == $color) {
+                $item['quantity'] += $quantity;
                 $found = true;
                 break;
             }
@@ -29,7 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'product_name' => $productName,
                 'price' => $price,
                 'image' => $image,
-                'quantity' => 1
+                'size' => $size,
+                'color' => $color,
+                'quantity' => $quantity
             ];
         }
         

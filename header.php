@@ -74,7 +74,7 @@ body {
 }
 
 header {
-    height: 100px;
+    height: 70px;
     position: fixed;
     top: 0;
     left: 0;
@@ -96,7 +96,9 @@ header {
     box-sizing: border-box;
 }
 
-
+.main-header i {
+    color: white;
+}
 
 .header-left, .header-center, .header-right {
     flex: 1;
@@ -148,7 +150,7 @@ header {
     width: 100px; /* Adjust this width based on your needs */
     padding-bottom: 2px;
     transition: width 0.3s ease;
-    font-size: 1.5em;
+    font-size: 1.1em;
 }
 
 @media (max-width: 992px) {
@@ -157,7 +159,7 @@ header {
 
 @media (max-width: 768px) {
     .header-left{
-        gap: 15px;
+        gap: 30px;
     }
     .header-center.img {
         width: 500px;
@@ -177,7 +179,7 @@ header {
 
 @media (max-width: 480px) {
     .header-left{
-        gap: 15px;
+        gap: 30px;
     }
     .header-center.img {
         width: 500px;
@@ -260,10 +262,16 @@ header {
     transform: translateY(-9px) rotate(-45deg);
 }
 
+@media (prefers-color-scheme: dark) {
+  .ham-menu span  {
+    background-color: #fff;
+  }
+}
+
 .logo img {
-    height: 90px;
+    height: 50px;
     width: auto;
-    border-radius: 100px;
+    border-radius: 102px;
     transition: transform 0.3s ease;
 
 }
@@ -368,6 +376,12 @@ header {
     margin-left: 10px;
 }
 
+.suggestion-size {
+    font-size: 14px;
+    color: var(--accent);
+    margin-left: 10px;
+}
+
 .no-results {
     padding: 15px;
     color: var(--text-secondary);
@@ -396,7 +410,16 @@ header {
     justify-content: center;
 }
 
+.theme-toggle i {
+    color: white;
+}
+
 .cart-icon1.cart-empty {
+    color: #ff4757 !important;
+}
+
+/* Ensure the shopping-cart icon itself becomes red when the cart is empty */
+.cart-icon1.cart-empty i {
     color: #ff4757 !important;
 }
 
@@ -563,6 +586,12 @@ header {
     margin-bottom: 5px;
 }
 
+.cart-item-size, .cart-item-color {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
 .cart-item-quantity {
     display: flex;
     align-items: center;
@@ -718,7 +747,7 @@ header {
     justify-content: center;
     align-items: center;
     z-index: 999;
-    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
     transition: all 0.3s ease;
     opacity: 0.9;
 }
@@ -742,7 +771,7 @@ header {
 @media (max-width: 768px) {
     header {
         padding: 12px 15px;
-        height: 80px;
+        height: 60px;
     }
     body{
         padding-top: 1px; /* Increase for mobile */
@@ -843,7 +872,11 @@ header {
 }
 
 .modal-content {
-    background: rgba(0, 0, 0, 0.7);
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.55) 100%), url('uploads/download.jpeg');
+    /* background-attachment: fixed; */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     width: 90%;
     max-width: 450px;
     border-radius: 16px;
@@ -862,7 +895,8 @@ header {
 
 .modal-header {
     padding: 20px;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    border-bottom: 2px solid rgba(0, 210, 255, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -898,6 +932,11 @@ header {
 
 .modal-body {
     padding: 25px;
+    background: rgba(0, 0, 0, 0.35);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .modal-title {
@@ -952,21 +991,21 @@ header {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
     margin: 20px 0 15px;
 }
 
 .download-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
-    background: linear-gradient(to right, #00c5ef, #2f6ac1);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 210, 255, 0.6);
+    background: linear-gradient(135deg, #00e5ff 0%, #4a8ce8 100%);
 }
 
 .close-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: none;
-    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 20px;
     border-radius: 50px;
     font-size: 0.9rem;
     cursor: pointer;
@@ -975,14 +1014,18 @@ header {
 }
 
 .close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.02);
 }
 
 .modal-footer {
     padding: 15px;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.5);
     font-size: 0.8rem;
-    opacity: 0.7;
+    opacity: 0.9;
+    border-top: 1px solid rgba(0, 210, 255, 0.2);
+    color: #cccccc;
 }
     </style>
 </head>
@@ -1086,14 +1129,14 @@ header {
     <div class="app-modal" id="appModal">
         <div class="modal-content">
             <div class="modal-header">
-                <img src="uploads/logo.jpeg" alt="Royals App Icon" class="app-icon">
                 <div class="app-info">
                     <h2 class="app-name">Royals App</h2>
+                    <p class="app-desc">Faster Checkout</p>
                 </div>
             </div>
             
-            <!-- <div class="modal-body">
-                <h3 class="modal-title">Get the Best Shopping Experience</h3>
+            <div class="modal-body">
+                <!-- <h3 class="modal-title">Get the Best Shopping Experience</h3>
                 <p>Enjoy our app-exclusive deals, faster checkout, and personalized recommendations.</p>
                 
                 <div class="features">
@@ -1278,11 +1321,15 @@ function fetchSearchSuggestions(query) {
             if (data.length > 0) {
                 let html = '';
                 data.forEach(product => {
+                    // ensure price exists and is formatted
+                    const price = product.price_ksh !== undefined && product.price_ksh !== null
+                        ? parseFloat(product.price_ksh).toFixed(2)
+                        : '0.00';
                     html += `
                         <div class="suggestion-item" onclick="selectSuggestion('${product.name.replace("'", "\\'")}')">
                             ${product.image ? `<img src="uploads/${product.image}" alt="${product.name}" class="suggestion-image">` : ''}
                             <div class="suggestion-name">${product.name}</div>
-                            <div class="suggestion-price">Ksh ${product.price_ksh}</div>
+                            <div class="suggestion-price">Ksh ${price}</div>
                         </div>
                     `;
                 });
@@ -1305,7 +1352,7 @@ function selectSuggestion(productName) {
 }
 
 // Cart functions
-function addToCart(productId, productName, price, image) {
+function addToCart(productId, productName, price, image, size, color) {
     if (!productId || !productName || !price) {
         console.error('Invalid product data');
         return;
@@ -1316,6 +1363,8 @@ function addToCart(productId, productName, price, image) {
     formData.append('product_name', productName);
     formData.append('price', price);
     formData.append('image', image || '');
+    formData.append('size', size || '');
+    formData.append('color', color || '');
     
     fetch('ajax/add_to_cart.php', {
         method: 'POST',
@@ -1328,6 +1377,17 @@ function addToCart(productId, productName, price, image) {
     .then(data => {
         if (data.success) {
             updateCartCountDisplay(data.cartCount);
+            // Dispatch a global event so any other scripts can react to cart changes
+            try {
+                const ev = new CustomEvent('cart:updated', { detail: { count: data.cartCount } });
+                document.dispatchEvent(ev);
+            } catch (e) {
+                // older browsers fallback: dispatch a simple Event
+                const ev = document.createEvent('Event');
+                ev.initEvent('cart:updated', true, true);
+                document.dispatchEvent(ev);
+            }
+
             showNotification(`${productName} has been added to your cart!`, `uploads/${image}`);
             if (cartModal.classList.contains('active')) {
                 loadCartItems();
@@ -1355,12 +1415,37 @@ function updateCartCountDisplay(count) {
         cartCountEl.textContent = count;
         cartCountEl.style.display = count > 0 ? 'flex' : 'none';
     }
+
+    // Toggle cart icon empty/filled state for visual feedback
+    const cartIconEl = document.querySelector('.cart-icon1');
+    if (cartIconEl) {
+        if (typeof count === 'number' && count > 0) {
+            cartIconEl.classList.remove('cart-empty');
+            cartIconEl.classList.add('cart-filled');
+        } else {
+            cartIconEl.classList.remove('cart-filled');
+            cartIconEl.classList.add('cart-empty');
+        }
+    }
 }
 
-function updateQuantity(productId, change) {
+// Allow other scripts to notify header of cart changes
+document.addEventListener('cart:updated', function(e) {
+    const count = e?.detail?.count;
+    if (typeof count === 'number') {
+        updateCartCountDisplay(count);
+    } else {
+        // If no count provided, optionally fetch current cart count from server
+        // but avoid extra requests by doing nothing here.
+    }
+});
+
+function updateQuantity(productId, change, size, color) {
     const formData = new FormData();
     formData.append('product_id', productId);
     formData.append('change', change);
+    formData.append('size', size || '');
+    formData.append('color', color || '');
     
     fetch('ajax/update_cart.php', {
         method: 'POST',
@@ -1374,6 +1459,14 @@ function updateQuantity(productId, change) {
         if (data.success) {
             loadCartItems();
             updateCartCountDisplay(data.cartCount);
+            try {
+                const ev = new CustomEvent('cart:updated', { detail: { count: data.cartCount } });
+                document.dispatchEvent(ev);
+            } catch (e) {
+                const ev = document.createEvent('Event');
+                ev.initEvent('cart:updated', true, true);
+                document.dispatchEvent(ev);
+            }
         } else {
             showNotification('Failed to update quantity', '', 'error');
         }
@@ -1384,9 +1477,9 @@ function updateQuantity(productId, change) {
     });
 }
 
-function removeCartItem(productId) {
+function removeCartItem(index) {
     const formData = new FormData();
-    formData.append('product_id', productId);
+    formData.append('index', index);
     
     fetch('ajax/remove_from_cart.php', {
         method: 'POST',
@@ -1400,6 +1493,14 @@ function removeCartItem(productId) {
         if (data.success) {
             loadCartItems();
             updateCartCountDisplay(data.cartCount);
+            try {
+                const ev = new CustomEvent('cart:updated', { detail: { count: data.cartCount } });
+                document.dispatchEvent(ev);
+            } catch (e) {
+                const ev = document.createEvent('Event');
+                ev.initEvent('cart:updated', true, true);
+                document.dispatchEvent(ev);
+            }
             showNotification('Item removed from cart', '', 'success');
         } else {
             showNotification(data.message || 'Failed to remove item', '', 'error');
@@ -1476,13 +1577,20 @@ function quickView(productId) {
             const addToCartBtn = quickviewContent.querySelector('.add-to-cart-btn');
             if (addToCartBtn) {
                 addToCartBtn.addEventListener('click', function() {
-                    const productId = this.getAttribute('onclick').match(/addToCart\((\d+),/)[1];
-                    const productName = this.getAttribute('onclick').match(/addToCart\(\d+, '([^']+)'/)[1];
-                    const price = this.getAttribute('onclick').match(/addToCart\(\d+, '[^']+', ([^,]+)/)[1];
-                    const image = this.getAttribute('onclick').match(/addToCart\(\d+, '[^']+', [^,]+, '([^']+)'/)[1];
-                    
-                    addToCart(productId, productName, price, image);
-                    quickviewModal.classList.remove('active');
+                    const onclickStr = this.getAttribute('onclick');
+                    const match = onclickStr.match(/addToCart\((\d+),\s*'([^']+)',\s*([^,]+),\s*'([^']+)',\s*'([^']*)',\s*'([^']*)'\)/);
+                    if (match) {
+                        const productId = match[1];
+                        const productName = match[2];
+                        const price = match[3];
+                        const image = match[4];
+                        const size = match[5] || '';
+                        const color = match[6] || '';
+                        addToCart(productId, productName, price, image, size, color);
+                        quickviewModal.classList.remove('active');
+                    } else {
+                        console.error('Failed to parse addToCart parameters');
+                    }
                 });
             }
         })
@@ -1567,32 +1675,36 @@ appModal.addEventListener('click', function(e) {
 // Event delegation for all click events
 document.addEventListener('click', function(e) {
     // Quantity buttons
-    if (e.target.classList.contains('quantity-increase') || e.target.closest('.quantity-increase')) {
+    if ((e.target.classList.contains('quantity-increase') || e.target.closest('.quantity-increase')) && e.target.closest('#cartModal')) {
         const btn = e.target.classList.contains('quantity-increase') ? e.target : e.target.closest('.quantity-increase');
         const item = btn.closest('.cart-item');
         if (item) {
             const productId = item.dataset.productId;
-            updateQuantity(productId, 1);
+            const size = item.dataset.size || '';
+            const color = item.dataset.color || '';
+            updateQuantity(productId, 1, size, color);
         }
     }
     
-    if (e.target.classList.contains('quantity-decrease') || e.target.closest('.quantity-decrease')) {
+    if ((e.target.classList.contains('quantity-decrease') || e.target.closest('.quantity-decrease')) && e.target.closest('#cartModal')) {
         const btn = e.target.classList.contains('quantity-decrease') ? e.target : e.target.closest('.quantity-decrease');
         const item = btn.closest('.cart-item');
         if (item) {
             const productId = item.dataset.productId;
-            updateQuantity(productId, -1);
+            const size = item.dataset.size || '';
+            const color = item.dataset.color || '';
+            updateQuantity(productId, -1, size, color);
         }
     }
     
-    // Remove item
-    if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
+    // Remove item - ONLY from cart modal (not from cart.php page)
+    if ((e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) && e.target.closest('#cartModal')) {
         const btn = e.target.classList.contains('remove-item') ? e.target : e.target.closest('.remove-item');
         const item = btn.closest('.cart-item');
         if (item) {
-            const productId = item.dataset.productId;
+            const index = item.dataset.index;
             if (confirm('Are you sure you want to remove this item?')) {
-                removeCartItem(productId);
+                removeCartItem(index);
             }
         }
     }
@@ -1674,6 +1786,33 @@ window.debugQuickview = function() {
         }
     }
 };
+
+// Poll cart count periodically to keep icon in sync (no refresh needed)
+let _lastCartCount = <?php echo (int)$cartCount; ?>;
+function pollCartCount() {
+    fetch('ajax/get_cart_count.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data && typeof data.cartCount !== 'undefined') {
+                const count = parseInt(data.cartCount, 10) || 0;
+                if (count !== _lastCartCount) {
+                    _lastCartCount = count;
+                    updateCartCountDisplay(count);
+                }
+            }
+        })
+        .catch(err => {
+            // silently ignore polling errors
+            // console.error('Cart poll error', err);
+        });
+}
+
+// Start polling after DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // initial poll in case cart changed elsewhere
+    pollCartCount();
+    setInterval(pollCartCount, 5000);
+});
 </script>
 
 </body>

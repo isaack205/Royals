@@ -626,7 +626,7 @@ include('header.php');
                     <i class="fas fa-shopping-bag"></i>
                     <h3>No Orders Yet</h3>
                     <p>You haven't placed any orders with us yet. Start shopping to see your orders here!</p>
-                    <a href="products.php" class="action-btn btn-primary">
+                    <a href="index.php" class="action-btn btn-primary">
                         <i class="fas fa-shopping-cart"></i> Start Shopping
                     </a>
                 </div>

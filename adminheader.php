@@ -431,9 +431,9 @@
     </aside>
     
     <!-- Main Content -->
-    <main class="main-content">
-        <!-- Your page content will go here -->
-    </main>
+    <!-- <main class="main-content">
+        Your page content will go here
+    </main> -->
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -502,7 +502,7 @@ include('header.php');
                 <i class="fas fa-shopping-bag"></i>
                 <h3>Your Luxury Cart Awaits</h3>
                 <p>Discover our premium collection and fill your cart with exceptional items</p>
-                <a href="home.php" class="continue-shopping">Explore Collection</a>
+                <a href="index.php" class="continue-shopping">Explore Collection</a>
             </div>
         <?php else: ?>
             <div class="cart-grid">
@@ -513,12 +513,22 @@ include('header.php');
                         $itemTotal = $item['price'] * $item['quantity'];
                         $total += $itemTotal;
                     ?>
-                        <div class="cart-item" data-product-id="<?= $item['product_id'] ?>" data-index="<?= $index ?>">
+                            <div class="cart-item"
+                                data-product-id="<?= $item['product_id'] ?>"
+                                data-index="<?= $index ?>"
+                                data-size="<?= htmlspecialchars($item['size'] ?? '') ?>"
+                                data-color="<?= htmlspecialchars($item['color'] ?? '') ?>">
                             <img src="uploads/<?= htmlspecialchars($item['image']) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" class="cart-item-image">
                             
                             <div class="cart-item-details">
                                 <div class="cart-item-name"><?= htmlspecialchars($item['product_name']) ?></div>
                                 <div class="cart-item-price">Ksh <?= number_format($item['price'], 2) ?></div>
+                                <?php if (!empty($item['size'])): ?>
+                                    <div class="cart-item-size" style="font-size: 0.9rem; color: var(--text-secondary);">Size: <?= htmlspecialchars($item['size']) ?></div>
+                                <?php endif; ?>
+                                <?php if (!empty($item['color'])): ?>
+                                    <div class="cart-item-color" style="font-size: 0.9rem; color: var(--text-secondary);">Color: <?= htmlspecialchars($item['color']) ?></div>
+                                <?php endif; ?>
                                 <div class="item-total">Ksh <?= number_format($itemTotal, 2) ?></div>
                             </div>
                             
@@ -545,7 +555,7 @@ include('header.php');
                     </div>
                     <div class="summary-row">
                         <span>Shipping</span>
-                        <span>Free</span>
+                        <span>Calculated at Checkout</span>
                     </div>
                     <div class="summary-row">
                         <span>Tax</span>
@@ -565,36 +575,44 @@ include('header.php');
     </div>
 
     <script>
-    // Enhanced Cart Functionality with AJAX Updates
     document.addEventListener('DOMContentLoaded', function() {
         const customNotification = document.getElementById('customNotification');
         const notificationMessage = customNotification.querySelector('.notification-message');
         const notificationAction = customNotification.querySelector('.notification-action');
-        
-        // Show custom notification
+
         function showCustomNotification(message, actionText = '', type = 'success') {
             customNotification.className = `custom-notification ${type}`;
-            customNotification.querySelector('i').className = type === 'success' 
-                ? 'fas fa-check-circle' 
+            customNotification.querySelector('i').className = type === 'success'
+                ? 'fas fa-check-circle'
                 : 'fas fa-exclamation-circle';
-                
+
             notificationMessage.textContent = message;
             notificationAction.textContent = actionText;
-            
             customNotification.classList.add('active');
-            
+
             setTimeout(() => {
                 customNotification.classList.remove('active');
             }, 3000);
         }
-        
-        // Update quantity function
-        function updateQuantity(productId, change, index) {
+
+        function updateSummary(cartTotal, cartCount) {
+            const subtotalEl = document.getElementById('subtotalAmount');
+            const totalEl = document.getElementById('totalAmount');
+            const countEl = document.getElementById('itemCount');
+
+            if (subtotalEl) subtotalEl.textContent = Number(cartTotal).toFixed(2);
+            if (totalEl) totalEl.textContent = Number(cartTotal).toFixed(2);
+            if (countEl) countEl.textContent = cartCount;
+        }
+
+        function updateQuantity(productId, change, index, size, color) {
             const formData = new FormData();
             formData.append('product_id', productId);
             formData.append('change', change);
             formData.append('index', index);
-            
+            formData.append('size', size || '');
+            formData.append('color', color || '');
+
             fetch('ajax/update_cart.php', {
                 method: 'POST',
                 body: formData
@@ -604,52 +622,47 @@ include('header.php');
                 return response.json();
             })
             .then(data => {
-                if (data.success) {
-                    // Update the specific item's quantity display
-                    const itemElement = document.querySelector(`.cart-item[data-index="${index}"]`);
-                    if (itemElement) {
-                        const quantityElement = itemElement.querySelector('.quantity-value');
-                        const priceElement = itemElement.querySelector('.item-total');
-                        const newQuantity = parseInt(quantityElement.textContent) + change;
-                        
-                        quantityElement.textContent = newQuantity;
-                        priceElement.textContent = 'Ksh ' + (data.itemTotal || (newQuantity * parseFloat(priceElement.textContent.replace(/[^0-9.]/g, '')) / (newQuantity - change))).toFixed(2);
-                    }
-                    
-                    // Update summary
-                    document.getElementById('subtotalAmount').textContent = data.cartTotal.toFixed(2);
-                    document.getElementById('totalAmount').textContent = data.cartTotal.toFixed(2);
-                    document.getElementById('itemCount').textContent = data.cartCount;
-                    
-                    showCustomNotification(
-                        `Quantity updated successfully`,
-                        `Your cart has been updated`,
-                        'success'
-                    );
-                } else {
-                    showCustomNotification(
-                        data.message || 'Failed to update quantity',
-                        'Please try again',
-                        'error'
-                    );
+                if (!data.success) {
+                    showCustomNotification(data.message || 'Failed to update quantity', 'Please try again', 'error');
+                    return;
                 }
+
+                const itemElement = document.querySelector(`.cart-item[data-index="${index}"]`);
+                if (itemElement) {
+                    const quantityElement = itemElement.querySelector('.quantity-value');
+                    const itemTotalElement = itemElement.querySelector('.item-total');
+                    const unitPriceElement = itemElement.querySelector('.cart-item-price');
+
+                    if (quantityElement && typeof data.itemQuantity !== 'undefined') {
+                        quantityElement.textContent = data.itemQuantity;
+                    } else if (quantityElement) {
+                        const currentQty = parseInt(quantityElement.textContent, 10) || 0;
+                        quantityElement.textContent = currentQty + change;
+                    }
+
+                    if (itemTotalElement && typeof data.itemTotal !== 'undefined') {
+                        itemTotalElement.textContent = 'Ksh ' + Number(data.itemTotal).toFixed(2);
+                    } else if (itemTotalElement && quantityElement && unitPriceElement) {
+                        const newQty = parseInt(quantityElement.textContent, 10) || 1;
+                        const unitPrice = parseFloat((unitPriceElement.textContent || '').replace(/[^0-9.]/g, '')) || 0;
+                        itemTotalElement.textContent = 'Ksh ' + (unitPrice * newQty).toFixed(2);
+                    }
+                }
+
+                updateSummary(data.cartTotal, data.cartCount);
+                showCustomNotification('Quantity updated successfully', 'Your cart has been updated', 'success');
             })
             .catch(error => {
                 console.error('Error:', error);
-                showCustomNotification(
-                    'Error updating quantity',
-                    'Please try again',
-                    'error'
-                );
+                showCustomNotification('Error updating quantity', 'Please try again', 'error');
             });
         }
-        
-        // Remove item function
+
         function removeCartItem(productId, index) {
             const formData = new FormData();
             formData.append('product_id', productId);
             formData.append('index', index);
-            
+
             fetch('ajax/remove_from_cart.php', {
                 method: 'POST',
                 body: formData
@@ -659,95 +672,77 @@ include('header.php');
                 return response.json();
             })
             .then(data => {
-                if (data.success) {
-                    // Remove item from DOM with animation
-                    const itemElement = document.querySelector(`.cart-item[data-index="${index}"]`);
-                    if (itemElement) {
-                        itemElement.style.transition = 'all 0.3s ease';
-                        itemElement.style.opacity = '0';
-                        itemElement.style.height = '0';
-                        itemElement.style.padding = '0';
-                        itemElement.style.margin = '0';
-                        itemElement.style.border = '0';
-                        itemElement.style.overflow = 'hidden';
-                        
-                        setTimeout(() => {
-                            itemElement.remove();
-                            
-                            // Update summary
-                            document.getElementById('subtotalAmount').textContent = data.cartTotal.toFixed(2);
-                            document.getElementById('totalAmount').textContent = data.cartTotal.toFixed(2);
-                            document.getElementById('itemCount').textContent = data.cartCount;
-                            
-                            // Check if cart is empty
-                            if (data.cartCount === 0) {
-                                location.reload(); // Reload to show empty cart state
-                            }
-                        }, 300);
-                    }
-                    
-                    showCustomNotification(
-                        'Item removed from cart',
-                        'Your cart has been updated',
-                        'success'
-                    );
-                } else {
-                    showCustomNotification(
-                        data.message || 'Failed to remove item',
-                        'Please try again',
-                        'error'
-                    );
+                if (!data.success) {
+                    showCustomNotification(data.message || 'Failed to remove item', 'Please try again', 'error');
+                    return;
                 }
+
+                const itemElement = document.querySelector(`.cart-item[data-index="${index}"]`);
+                if (itemElement) {
+                    itemElement.style.transition = 'all 0.3s ease';
+                    itemElement.style.opacity = '0';
+                    itemElement.style.height = '0';
+                    itemElement.style.padding = '0';
+                    itemElement.style.margin = '0';
+                    itemElement.style.border = '0';
+                    itemElement.style.overflow = 'hidden';
+
+                    setTimeout(() => {
+                        itemElement.remove();
+                        updateSummary(data.cartTotal, data.cartCount);
+
+                        if (Number(data.cartCount) === 0) {
+                            location.reload();
+                        }
+                    }, 300);
+                } else {
+                    updateSummary(data.cartTotal, data.cartCount);
+                }
+
+                showCustomNotification('Item removed from cart', 'Your cart has been updated', 'success');
             })
             .catch(error => {
                 console.error('Error:', error);
-                showCustomNotification(
-                    'Error removing item',
-                    'Please try again',
-                    'error'
-                );
+                showCustomNotification('Error removing item', 'Please try again', 'error');
             });
         }
-        
-        // Event delegation for cart buttons
+
         document.addEventListener('click', function(e) {
-            // Quantity increase
-            if (e.target.classList.contains('quantity-increase')) {
+            const increaseBtn = e.target.closest('.quantity-increase');
+            const decreaseBtn = e.target.closest('.quantity-decrease');
+            const removeBtn = e.target.closest('.remove-item');
+
+            if (increaseBtn) {
                 e.preventDefault();
-                const item = e.target.closest('.cart-item');
-                const productId = item.dataset.productId;
-                const index = item.dataset.index;
-                updateQuantity(productId, 1, index);
-            }
-            
-            // Quantity decrease
-            if (e.target.classList.contains('quantity-decrease')) {
-                e.preventDefault();
-                const item = e.target.closest('.cart-item');
-                const productId = item.dataset.productId;
-                const index = item.dataset.index;
-                const currentQty = parseInt(item.querySelector('.quantity-value').textContent);
-                
-                if (currentQty > 1) {
-                    updateQuantity(productId, -1, index);
-                } else {
-                    showCustomNotification(
-                        'Minimum quantity is 1',
-                        'Remove item if you no longer want it',
-                        'error'
-                    );
+                e.stopImmediatePropagation();
+                const item = increaseBtn.closest('.cart-item');
+                if (item) {
+                    updateQuantity(item.dataset.productId, 1, item.dataset.index, item.dataset.size, item.dataset.color);
                 }
+                return;
             }
-            
-            // Remove item
-            if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
+
+            if (decreaseBtn) {
                 e.preventDefault();
-                const item = e.target.closest('.cart-item');
-                const productId = item.dataset.productId;
-                const index = item.dataset.index;
-                
-                if (confirm('Are you sure you want to remove this item from your cart?')) {
-                    removeCartItem(productId, index);
+                e.stopImmediatePropagation();
+                const item = decreaseBtn.closest('.cart-item');
+                if (item) {
+                    const currentQty = parseInt(item.querySelector('.quantity-value')?.textContent || '1', 10);
+                    if (currentQty > 1) {
+                        updateQuantity(item.dataset.productId, -1, item.dataset.index, item.dataset.size, item.dataset.color);
+                    } else {
+                        showCustomNotification('Minimum quantity is 1', 'Remove item if you no longer want it', 'warning');
+                    }
+                }
+                return;
+            }
+
+            if (removeBtn) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                const item = removeBtn.closest('.cart-item');
+                if (item && confirm('Are you sure you want to remove this item from your cart?')) {
+                    removeCartItem(item.dataset.productId, item.dataset.index);
                 }
             }
         });

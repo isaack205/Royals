@@ -10,26 +10,26 @@ $response = [
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $productId = filter_input(INPUT_POST, 'product_id', FILTER_SANITIZE_NUMBER_INT);
+    $index = filter_input(INPUT_POST, 'index', FILTER_SANITIZE_NUMBER_INT);
     
-    if ($productId && isset($_SESSION['cart'])) {
-        foreach ($_SESSION['cart'] as $key => $item) {
-            if ($item['product_id'] == $productId) {
-                unset($_SESSION['cart'][$key]);
-                $_SESSION['cart'] = array_values($_SESSION['cart']);
-                
-                $response['success'] = true;
-                $response['message'] = 'Item removed from cart';
-                break;
-            }
-        }
+    if ($index !== false && isset($_SESSION['cart'][$index])) {
+        unset($_SESSION['cart'][$index]);
+        $_SESSION['cart'] = array_values($_SESSION['cart']);
+        
+        $response['success'] = true;
+        $response['message'] = 'Item removed from cart';
         
         // Calculate updated cart metrics
-        $response['cartCount'] = count($_SESSION['cart']);
+        $response['cartCount'] = array_reduce($_SESSION['cart'], function($carry, $item) {
+            return $carry + $item['quantity'];
+        }, 0);
         
         $response['cartTotal'] = array_reduce($_SESSION['cart'], function($carry, $item) {
             return $carry + ($item['price'] * $item['quantity']);
         }, 0);
+    } elseif (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
+        $response['cartCount'] = 0;
+        $response['cartTotal'] = 0.00;
     }
 }
 

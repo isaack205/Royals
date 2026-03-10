@@ -142,7 +142,7 @@ footer {
             
             <div class="footer-section">
                 <h3>Quick Links</h3>
-                <a href="home.php">Home</a>
+                <a href="index.php">Home</a>
                 <a href="products.php">Products</a>
                 <a href="about_us.php">About Us</a>
                 <a href="contact.php">Contact</a>
@@ -170,8 +170,9 @@ footer {
         </div>
         
         <div class="copyright">
-            &copy; 2024-2025 Royals Online Store | All Rights Reserved <br>
-            Developed and maintained by <a href="https://wa.me/254773743248" target="_blank">Simon Ngugi</a>
+            Copyrights royals &copy; 2026 | All Rights Reserved <br>
+            Developed and maintained by <a href="https://wa.me/254773743248" target="_blank">Simon Ngugi</a> and <a href="https://wa.me/254742328330" target="_blank">Isaac</a> <a href="https://my-portfolio-ivory-five-28.vercel.app/" target="_blank">Kahura</a>
+
         </div>
     </footer>
     
@@ -265,12 +266,12 @@ footer {
     
     // Brand filtering functionality
     function filterByBrand(brand) {
-        window.location.href = `home.php?brand=${brand}`;
+        window.location.href = `index.php?brand=${brand}`;
     }
     
     // Section filtering functionality
     function filterBySection(section) {
-        window.location.href = `home.php?section=${section}`;
+        window.location.href = `index.php?section=${section}`;
     }
     </script>
 </body>

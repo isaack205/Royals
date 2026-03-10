@@ -80,6 +80,7 @@ if (empty($cartData)) {
 $name = $paymentInfo['name'] ?? 'Unknown';
 $email = $paymentInfo['email'] ?? '';
 $phone = $paymentInfo['phone'] ?? '';
+$phone2 = $paymentInfo['phone2'] ?? '';
 $address = $paymentInfo['address'] ?? 'No address';
 $amount = $result['data']['amount'] / 100; // Convert cents back to KES
 $shippingMethod = $paymentInfo['shipping_method'] ?? 'Standard';
@@ -100,7 +101,7 @@ $orderItemsJson = json_encode($orderItemsArray);
 try {
     $stmt = $pdo->prepare("
         INSERT INTO mycheckout 
-        (client_id, session_id, customer_name, customer_email, customer_phone, 
+        (client_id, session_id, customer_name, customer_email, customer_phone, customer_phone2,
          shipping_address, payment_method, order_total, order_items, status) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'paid')
     ");
@@ -116,6 +117,7 @@ try {
         $name,
         $email,
         $phone,
+        $phone2 ?: null,
         $fullAddress,
         $paymentMethod,
         $amount,

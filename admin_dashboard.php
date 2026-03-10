@@ -73,6 +73,7 @@ include('adminheader.php');
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            margin-top: 70px;
         }
         
         /* Welcome Message */

@@ -19,7 +19,9 @@ if (!empty($searchQuery)) {
 
     // Use wildcards (%) to search for the query anywhere in the product name
 
-    $sql = "SELECT id, name FROM products WHERE name LIKE '%$searchQuery%' LIMIT 20";
+    // include price so suggestions can display it
+
+    $sql = "SELECT id, name, price_ksh FROM products WHERE name LIKE '%$searchQuery%' LIMIT 20";
 
     $stmt = $connection->prepare($sql);
 
@@ -37,7 +39,9 @@ if (!empty($searchQuery)) {
 
             'id' => $row['id'],
 
-            'name' => $row['name']
+            'name' => $row['name'],
+
+            'price_ksh' => $row['price_ksh']
 
         ];
 

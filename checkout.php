@@ -21,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['complete_order'])) {
         'last_name' => $_POST['last_name'] ?? '',
         'email' => $_POST['email'] ?? '',
         'phone' => $_POST['phone'] ?? '',
+        'phone2' => $_POST['phone2'] ?? '',
         'country' => $_POST['country'] ?? 'Kenya',
         'address' => $_POST['address'] ?? '',
         'apartment' => $_POST['apartment'] ?? '',
@@ -373,6 +374,67 @@ $grandTotal = $subtotal + $shippingCost;
         margin-bottom: 1.5rem;
     }
 
+    .discount-code-area {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border: 1px solid rgba(0, 210, 255, 0.35);
+        border-radius: 10px;
+        background: rgba(0, 210, 255, 0.04);
+    }
+
+    .discount-code-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 0.65rem 0;
+        color: var(--checkout-text);
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .discount-code-title i {
+        color: var(--checkout-accent);
+    }
+
+    .discount-code-row {
+        display: flex;
+        gap: 0.6rem;
+    }
+
+    .discount-code-input {
+        flex: 1;
+        padding: 0.7rem 0.85rem;
+        border: 1px solid var(--checkout-border);
+        border-radius: 8px;
+        background: var(--primary-bg);
+        color: var(--checkout-text);
+        font-size: 0.92rem;
+    }
+
+    .discount-code-input:focus {
+        outline: none;
+        border-color: var(--checkout-accent);
+        box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.12);
+    }
+
+    .discount-apply-btn {
+        padding: 0.7rem 1rem;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(45deg, var(--checkout-accent), #3a7bd5);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .discount-note {
+        margin: 0.55rem 0 0 0;
+        font-size: 0.8rem;
+        color: var(--checkout-secondary);
+    }
+
     .payment-method-section {
         background: var(--checkout-card);
         border: 1px solid var(--checkout-border);
@@ -595,6 +657,14 @@ $grandTotal = $subtotal + $shippingCost;
             height: auto;
         }
 
+        .discount-code-row {
+            flex-direction: column;
+        }
+
+        .discount-apply-btn {
+            width: 100%;
+        }
+
     }
 
     /* Desktop-specific button sizing */
@@ -681,6 +751,12 @@ $grandTotal = $subtotal + $shippingCost;
                                 <label>Phone</label>
                                 <input type="tel" id="phone" name="phone" class="form-control"
                                     value="<?= htmlspecialchars($_SESSION['checkout_data']['phone'] ?? '') ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label> Phone 2 (Optional)</label>
+                                <input type="tel" id="phone2" name="phone2" class="form-control"
+                                    value="<?= htmlspecialchars($_SESSION['checkout_data']['phone2'] ?? '') ?>"
+                                    placeholder="Alternative contact number">
                             </div>
 
                             <!-- Save Info Checkbox -->
@@ -902,6 +978,15 @@ $grandTotal = $subtotal + $shippingCost;
                                 </button>
                             </div>
 
+                            <div class="discount-code-area">
+                                <p class="discount-code-title"><i class="fas fa-tag"></i> Discount Code</p>
+                                <div class="discount-code-row">
+                                    <input type="text" class="discount-code-input" placeholder="Enter coupon code">
+                                    <button type="button" class="discount-apply-btn">Apply</button>
+                                </div>
+                                <p class="discount-note">Have a promo code? Enter it above and apply before payment.</p>
+                            </div>
+
                             <div class="total-row"
                                 style="font-weight: 700; font-size: 1.2rem; border-top: 2px solid var(--checkout-accent); margin-top: 1rem; padding-top: 1rem; display: flex; justify-content: space-between;">
                                 <span>Total</span>
@@ -1120,6 +1205,7 @@ $grandTotal = $subtotal + $shippingCost;
             const fname = document.getElementById('first_name').value.trim();
             const lname = document.getElementById('last_name').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const phone2 = document.getElementById('phone2').value.trim();
 
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -1161,6 +1247,7 @@ $grandTotal = $subtotal + $shippingCost;
                     email: email,
                     name: fname + ' ' + lname,
                     phone: phone,
+                    phone2: phone2,
                     address: address,
                     amount: totalAmount,
                     shipping_method: shippingMethod,
@@ -1218,6 +1305,7 @@ $grandTotal = $subtotal + $shippingCost;
             const fname = document.getElementById('first_name').value.trim();
             const lname = document.getElementById('last_name').value.trim();
             const phone = document.getElementById('phone').value.trim();
+            const phone2 = document.getElementById('phone2').value.trim();
             const apartment = document.getElementById('apartment').value.trim();
             const address = document.getElementById('address').value.trim() + (apartment ? ', ' + apartment : '');
 
@@ -1242,6 +1330,7 @@ $grandTotal = $subtotal + $shippingCost;
                     email: email,
                     name: fname + ' ' + lname,
                     phone: phone,
+                    phone2: phone2,
                     address: address,
                     amount: subtotal + shipCost,
                     shipping_method: shippingMethod,
@@ -1286,6 +1375,7 @@ $grandTotal = $subtotal + $shippingCost;
                     if (data.address) document.getElementById('address').value = data.address;
                     if (data.apartment) document.getElementById('apartment').value = data.apartment;
                     if (data.phone) document.getElementById('phone').value = data.phone;
+                    if (data.phone2) document.getElementById('phone2').value = data.phone2;
                     document.getElementById('saveInfo').checked = true;
                     console.log('✓ Loaded saved checkout info');
                 } catch (e) {
@@ -1305,6 +1395,7 @@ $grandTotal = $subtotal + $shippingCost;
                     address: document.getElementById('address').value.trim(),
                     apartment: document.getElementById('apartment').value.trim(),
                     phone: document.getElementById('phone').value.trim(),
+                    phone2: document.getElementById('phone2').value.trim(),
                     saved_at: new Date().toISOString()
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));

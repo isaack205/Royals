@@ -19,7 +19,7 @@ if (isset($_GET['remove'])) {
 
 // Query to fetch all orders from mycheckout table
 $query = "SELECT id AS order_id, customer_name, customer_email AS email, customer_phone AS phone, 
-                 shipping_address, order_total AS total_price, created_at AS order_date, 
+                 customer_phone2 AS phone2, shipping_address, order_total AS total_price, created_at AS order_date, 
                  order_items, payment_method, status
           FROM mycheckout
           ORDER BY created_at DESC";
@@ -267,15 +267,210 @@ include('adminheader.php');
         tr:hover {
             transform: translateX(5px);
         }
+
+        /* Print Styles */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            body {
+                background: white;
+                color: black;
+                margin: 0;
+            }
+
+            /* Print only the report area (exclude admin panel and any other UI) */
+            body * {
+                visibility: hidden !important;
+            }
+
+            .orders-container,
+            .orders-container * {
+                visibility: visible !important;
+            }
+
+            .orders-container {
+                position: static;
+                max-width: none;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: visible !important;
+            }
+
+            /* Hide non-printable elements */
+            header,
+            .action-btn,
+            .no-print {
+                display: none !important;
+            }
+
+            /* Hide report banner for compact, data-first print */
+            .print-header {
+                display: none !important;
+            }
+
+            /* Print header */
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin: 0 0 14px 0;
+                padding: 0 0 10px 0;
+                border-bottom: 2px solid #111;
+            }
+
+            .print-header h1 {
+                font-size: 22px;
+                line-height: 1.2;
+                margin: 0 0 6px 0;
+                color: #111;
+                letter-spacing: 0.4px;
+            }
+
+            .print-header p {
+                margin: 2px 0;
+                color: #333;
+                font-size: 12px;
+            }
+
+            table {
+                box-shadow: none;
+                border: 1px solid #000;
+                page-break-inside: auto;
+                border-radius: 0;
+                width: 100%;
+                table-layout: fixed;
+                display: table !important;
+                overflow: visible !important;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tfoot {
+                display: table-footer-group;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+                break-inside: avoid-page;
+            }
+
+            th {
+                background: #f0f0f0 !important;
+                color: #000 !important;
+                border: 1px solid #000 !important;
+                font-size: 10px;
+                padding: 6px 5px;
+                line-height: 1.2;
+            }
+
+            td {
+                border: 1px solid #000 !important;
+                color: #000 !important;
+                font-size: 9px;
+                padding: 5px 5px;
+                line-height: 1.25;
+                vertical-align: top;
+                word-wrap: break-word;
+                overflow-wrap: anywhere;
+            }
+
+            tr:hover {
+                background: transparent;
+                transform: none;
+            }
+
+            .status-badge {
+                border: 1px solid #000;
+                color: #000 !important;
+                background: transparent !important;
+            }
+
+            .customer-link {
+                color: #000 !important;
+                text-decoration: none;
+            }
+
+            .product-variant {
+                background: #f4f6f8 !important;
+                border: 1px solid #c8d0d8;
+                color: #111;
+                font-size: 8.5px;
+                padding: 1px 4px;
+            }
+
+            /* Keep print focused on business data, not UI controls */
+            table th:last-child,
+            table td:last-child {
+                display: none;
+            }
+        }
+
+        /* Print button */
+        .print-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 210, 255, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0, 210, 255, 0.6);
+        }
+
+        .print-header {
+            display: none;
+        }
+
+        .product-variant {
+            display: inline-block;
+            margin: 0.2rem 0;
+            padding: 0.2rem 0.5rem;
+            background: rgba(0, 210, 255, 0.1);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 
 <body>
 
     <div class="orders-container">
-        <header>
+        <!-- Print-only header -->
+        <div class="print-header">
+            <h1>Royals - Orders Register</h1>
+            <p>Operational Order Report</p>
+            <p>Generated on: <?php echo date('l, F j, Y \a\t g:i A'); ?></p>
+            <p>Total orders in this report: <?php echo count($orders); ?></p>
+        </div>
+
+        <header class="no-print">
             <h1><i class="fas fa-shopping-bag"></i> Orders Management</h1>
         </header>
+
+        <!-- Print Button -->
+        <button onclick="window.print()" class="print-btn no-print">
+            <i class="fas fa-print"></i> Print Orders
+        </button>
+        <p class="no-print" style="margin: 0 0 0.8rem 0; color: #8b92a7; font-size: 0.86rem;">
+            Tip: In print settings, disable browser "Headers and footers" for a clean report.
+        </p>
 
         <table>
             <thead>
@@ -297,7 +492,7 @@ include('adminheader.php');
             <?php if (!empty($orders)): ?>
                 <?php foreach ($orders as $order): ?>
                     <?php
-                    // Parse order_items JSON to get product names
+                    // Parse order_items JSON to get product names with size/color
                     $products = [];
                     if (!empty($order['order_items'])) {
                         $items = json_decode($order['order_items'], true);
@@ -305,11 +500,22 @@ include('adminheader.php');
                             foreach ($items as $item) {
                                 $productName = $item['product_name'] ?? 'Unknown Product';
                                 $quantity = $item['quantity'] ?? 1;
-                                $products[] = $productName . ' (x' . $quantity . ')';
+                                $size = $item['size'] ?? '';
+                                $color = $item['color'] ?? '';
+                                
+                                $variant = '';
+                                if (!empty($size) || !empty($color)) {
+                                    $variantParts = [];
+                                    if (!empty($size)) $variantParts[] = 'Size: ' . $size;
+                                    if (!empty($color)) $variantParts[] = 'Color: ' . $color;
+                                    $variant = ' <span class="product-variant">(' . implode(', ', $variantParts) . ')</span>';
+                                }
+                                
+                                $products[] = $productName . $variant . ' <strong>x' . $quantity . '</strong>';
                             }
                         }
                     }
-                    $productList = !empty($products) ? implode(', ', $products) : 'N/A';
+                    $productList = !empty($products) ? implode('<br>', $products) : 'N/A';
                     
                     // Extract shipping address (remove the "\n\nShipping:" part if present)
                     $address = explode("\n\n", $order['shipping_address'])[0];
@@ -322,11 +528,18 @@ include('adminheader.php');
                             </a>
                         </td>
                         <td><?php echo htmlspecialchars($order['email']); ?></td>
-                        <td><?php echo htmlspecialchars($order['phone']); ?></td>
+                        <td>
+                            <?php 
+                            echo htmlspecialchars($order['phone']); 
+                            if (!empty($order['phone2'])) {
+                                echo '<br><small style="color: #8b92a7;">' . htmlspecialchars($order['phone2']) . '</small>';
+                            }
+                            ?>
+                        </td>
                         <td><?php echo htmlspecialchars($address); ?></td>
                         <td><?php echo number_format($order['total_price'], 2); ?></td>
                         <td><?php echo date('Y-m-d H:i', strtotime($order['order_date'])); ?></td>
-                        <td><?php echo htmlspecialchars($productList); ?></td>
+                        <td><?php echo $productList; ?></td>
                         <td><?php 
                             $paymentMethod = $order['payment_method'];
                             if (strpos($paymentMethod, 'Paystack') !== false) {

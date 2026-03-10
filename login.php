@@ -7,7 +7,7 @@ session_start();
 
 // Check if user is already logged in
 if (isset($_SESSION['user_id'])) {
-    header("Location: home.php");
+    header("Location: index.php");
     exit();
 }
 
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
                 }
                 
                 // Redirect to home page
-                header("Location: home.php");
+                header("Location: index.php");
                 exit();
             } else {
                 $errors['login'] = "Invalid email or password";
@@ -196,13 +196,13 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-.logo {
+.logo2 {
     text-align: center;
     margin-bottom: 1.5rem;
 }
 
-.logo img {
-    height: 30px;
+.logo2 img {
+    height: 50px;
     width: auto;
 }
 
@@ -577,8 +577,8 @@ h2 {
                     <button class="toggle-btn" id="toggleRegister">Register</button>
                 </div>
                 
-                <div class="logo">
-                    <a href="home.php">
+                <div class="logo2">
+                    <a href="index.php">
                         <img src="uploads/logo.jpeg" alt="Royals Logo">
                     </a>
                 </div>
