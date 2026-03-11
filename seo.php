@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
+
 // Set the content type to HTML
 header("Content-Type: text/html; charset=UTF-8");
 

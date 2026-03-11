@@ -88,11 +88,16 @@ $shippingMethod = $paymentInfo['shipping_method'] ?? 'Standard';
 // Build order items as JSON array (matching format from process_order.php)
 $orderItemsArray = [];
 foreach ($cartData as $item) {
+    $size = trim((string)($item['size'] ?? $item['selected_size'] ?? $item['variant_size'] ?? ''));
+    $color = trim((string)($item['color'] ?? $item['selected_color'] ?? $item['variant_color'] ?? ''));
+
     $orderItemsArray[] = [
         'product_name' => $item['name'] ?? $item['product_name'] ?? 'Product',
         'quantity' => intval($item['quantity'] ?? 1),
         'price' => floatval($item['price'] ?? 0),
-        'image' => $item['image'] ?? 'default.jpg'
+        'image' => $item['image'] ?? 'default.jpg',
+        'size' => $size,
+        'color' => $color
     ];
 }
 $orderItemsJson = json_encode($orderItemsArray);
@@ -102,8 +107,8 @@ try {
     $stmt = $pdo->prepare("
         INSERT INTO mycheckout 
         (client_id, session_id, customer_name, customer_email, customer_phone, customer_phone2,
-         shipping_address, payment_method, order_total, order_items, status) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'paid')
+                 shipping_address, payment_method, order_total, order_items, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'paid')
     ");
 
     $clientId = $_SESSION['client_id'] ?? 0;

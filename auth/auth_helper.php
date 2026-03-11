@@ -4,6 +4,8 @@
  * Ensures session is started for all pages that include this file
  */
 
+require_once __DIR__ . '/../lock_guard.php';
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

@@ -1,6 +1,10 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
+
 // Start the session to use cart functionality
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Initialize cart if not exists
 if (!isset($_SESSION['cart'])) {

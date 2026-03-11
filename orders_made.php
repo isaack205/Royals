@@ -446,6 +446,13 @@ include('adminheader.php');
             border-radius: 4px;
             font-size: 0.85rem;
         }
+
+        .alt-phone {
+            display: inline-block;
+            margin-top: 0.25rem;
+            font-size: 0.82rem;
+            color: #8b92a7;
+        }
     </style>
 </head>
 
@@ -500,18 +507,18 @@ include('adminheader.php');
                             foreach ($items as $item) {
                                 $productName = $item['product_name'] ?? 'Unknown Product';
                                 $quantity = $item['quantity'] ?? 1;
-                                $size = $item['size'] ?? '';
-                                $color = $item['color'] ?? '';
+                                $size = trim((string)($item['size'] ?? $item['selected_size'] ?? $item['variant_size'] ?? ''));
+                                $color = trim((string)($item['color'] ?? $item['selected_color'] ?? $item['variant_color'] ?? ''));
                                 
                                 $variant = '';
                                 if (!empty($size) || !empty($color)) {
                                     $variantParts = [];
-                                    if (!empty($size)) $variantParts[] = 'Size: ' . $size;
-                                    if (!empty($color)) $variantParts[] = 'Color: ' . $color;
+                                    if (!empty($size)) $variantParts[] = 'Size: ' . htmlspecialchars($size);
+                                    if (!empty($color)) $variantParts[] = 'Color: ' . htmlspecialchars($color);
                                     $variant = ' <span class="product-variant">(' . implode(', ', $variantParts) . ')</span>';
                                 }
                                 
-                                $products[] = $productName . $variant . ' <strong>x' . $quantity . '</strong>';
+                                $products[] = htmlspecialchars($productName) . $variant . ' <strong>x' . intval($quantity) . '</strong>';
                             }
                         }
                     }
@@ -532,7 +539,7 @@ include('adminheader.php');
                             <?php 
                             echo htmlspecialchars($order['phone']); 
                             if (!empty($order['phone2'])) {
-                                echo '<br><small style="color: #8b92a7;">' . htmlspecialchars($order['phone2']) . '</small>';
+                                echo '<br><span class="alt-phone"><i class="fas fa-phone-alt"></i> Alt: ' . htmlspecialchars($order['phone2']) . '</span>';
                             }
                             ?>
                         </td>

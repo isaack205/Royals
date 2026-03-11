@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
+
 // $host = "sql103.infinityfree.com";
 // $dbname = "if0_38161163_brandx";
 // $username = "if0_38161163";

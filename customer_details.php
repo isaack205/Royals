@@ -602,6 +602,13 @@ include('adminheader.php');
             font-size: 0.85rem;
             color: var(--accent);
         }
+
+        .alt-phone {
+            display: inline-block;
+            margin-top: 0.35rem;
+            color: #8b92a7;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -657,7 +664,7 @@ include('adminheader.php');
                         <?php 
                         echo htmlspecialchars($order['phone']); 
                         if (!empty($order['phone2'])) {
-                            echo '<br><small style="color: #8b92a7; font-size: 0.9em;">Alt: ' . htmlspecialchars($order['phone2']) . '</small>';
+                            echo '<br><span class="alt-phone"><i class="fas fa-phone-alt"></i> Alternate: ' . htmlspecialchars($order['phone2']) . '</span>';
                         }
                         ?>
                     </span>
@@ -712,8 +719,8 @@ include('adminheader.php');
                                 $subtotal += $item_total;
                                 $imagePath = !empty($item['image']) ? 'uploads/' . htmlspecialchars($item['image']) : 'https://via.placeholder.com/60x60?text=No+Image';
                                 
-                                $size = $item['size'] ?? '';
-                                $color = $item['color'] ?? '';
+                                $size = trim((string)($item['size'] ?? $item['selected_size'] ?? $item['variant_size'] ?? ''));
+                                $color = trim((string)($item['color'] ?? $item['selected_color'] ?? $item['variant_color'] ?? ''));
                             ?>
                                 <tr>
                                     <td>

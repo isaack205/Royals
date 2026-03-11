@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
 
 // Enable CORS (if you're accessing from a different domain)
 

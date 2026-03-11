@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
 
 // Progressive Web App Converter - Complete in one file
 

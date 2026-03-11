@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
+
 // Define the upload directory
 $uploadDir = 'ads/'; // Folder to save the uploaded ads
 $error = ""; // To store errors

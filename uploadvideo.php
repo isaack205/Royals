@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/lock_guard.php';
+
 // videoupload.php
 
 // Enable error reporting for debugging (remove in production)
