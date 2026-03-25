@@ -3,25 +3,16 @@
 session_start();
 include('db.php');
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
+// Check if user is logged in (supports both session key conventions)
+if (!isset($_SESSION['client_id']) && !isset($_SESSION['user_id'])) {
     header("Location: login.php?redirect=orders.php");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['client_id'] ?? $_SESSION['user_id'];
 
-// Fetch user's orders
-$orders_query = "
-    SELECT o.*, 
-           COUNT(od.order_detail_id) as item_count,
-           SUM(od.price * od.quantity) as total_amount
-    FROM mycheckout o 
-    LEFT JOIN order_details od ON o.id = od.order_id 
-    WHERE o.client_id = ? 
-    GROUP BY o.id 
-    ORDER BY o.created_at DESC
-";
+// Fetch user's orders directly from mycheckout (items stored as JSON in order_items)
+$orders_query = "SELECT * FROM mycheckout WHERE client_id = ? ORDER BY created_at DESC";
 $stmt = $connection->prepare($orders_query);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -505,13 +496,10 @@ include('header.php');
             <?php if ($orders_result->num_rows > 0): ?>
                 <?php while ($order = $orders_result->fetch_assoc()): ?>
                     <?php
-                    // Get order items
-                    $order_id = $order['id'];
-                    $items_query = "SELECT * FROM order_details WHERE order_id = ?";
-                    $stmt_items = $connection->prepare($items_query);
-                    $stmt_items->bind_param("i", $order_id);
-                    $stmt_items->execute();
-                    $items_result = $stmt_items->get_result();
+                    // Parse order items from JSON stored in order_items column
+                    $items = json_decode($order['order_items'], true) ?? [];
+                    $item_count = count($items);
+                    $total_amount = $order['order_total'];
                     
                     // Determine status class
                     $status_class = 'status-' . $order['status'];
@@ -534,7 +522,7 @@ include('header.php');
                             <div class="order-summary">
                                 <div class="summary-item">
                                     <span class="summary-label">Total Amount</span>
-                                    <span class="summary-value">Ksh <?php echo number_format($order['total_amount'], 2); ?></span>
+                                    <span class="summary-value">Ksh <?php echo number_format($total_amount, 2); ?></span>
                                 </div>
                                 <div class="summary-item">
                                     <span class="summary-label">Payment Method</span>
@@ -542,14 +530,14 @@ include('header.php');
                                 </div>
                                 <div class="summary-item">
                                     <span class="summary-label">Items</span>
-                                    <span class="summary-value"><?php echo $order['item_count']; ?> item(s)</span>
+                                    <span class="summary-value"><?php echo $item_count; ?> item(s)</span>
                                 </div>
                             </div>
 
                             <div class="order-items">
                                 <h4 class="items-title">Order Items</h4>
                                 <div class="items-list">
-                                    <?php while ($item = $items_result->fetch_assoc()): ?>
+                                    <?php foreach ($items as $item): ?>
                                         <div class="item-card">
                                             <div class="item-image">
                                                 <img src="uploads/<?php echo htmlspecialchars($item['image'] ?? 'default-product.jpg'); ?>" alt="<?php echo htmlspecialchars($item['product_name']); ?>">
@@ -557,15 +545,15 @@ include('header.php');
                                             <div class="item-info">
                                                 <div class="item-name"><?php echo htmlspecialchars($item['product_name']); ?></div>
                                                 <div class="item-details">
-                                                    Quantity: <?php echo $item['quantity']; ?> • 
-                                                    Ksh <?php echo number_format($item['price'], 2); ?> each
+                                                    Quantity: <?php echo intval($item['quantity']); ?> • 
+                                                    Ksh <?php echo number_format(floatval($item['price']), 2); ?> each
                                                 </div>
                                             </div>
                                             <div class="item-price">
-                                                Ksh <?php echo number_format($item['price'] * $item['quantity'], 2); ?>
+                                                Ksh <?php echo number_format(floatval($item['price']) * intval($item['quantity']), 2); ?>
                                             </div>
                                         </div>
-                                    <?php endwhile; ?>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
 

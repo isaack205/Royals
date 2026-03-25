@@ -18,6 +18,18 @@ if (!is_string($redirectPath) || strpos($redirectPath, 'http://') === 0 || strpo
     $redirectPath = 'index.php';
 }
 
+$year = (int)date('Y');
+$month = (int)date('n');
+$targetEpoch = mktime(23, 59, 59, $month, 14, $year);
+$targetTimestamp = $targetEpoch * 1000;
+
+// After the countdown deadline, keep the site open without requiring password unlock.
+if (time() > $targetEpoch) {
+    $_SESSION['site_unlocked'] = true;
+    header('Location: ' . $redirectPath);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $formType = $_POST['form_type'] ?? '';
 
@@ -46,10 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
-$year = (int)date('Y');
-$month = (int)date('n');
-$targetTimestamp = mktime(23, 59, 59, $month, 14, $year) * 1000;
 ?>
 <!DOCTYPE html>
 <html lang="en">

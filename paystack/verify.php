@@ -111,7 +111,8 @@ try {
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'paid')
     ");
 
-    $clientId = $_SESSION['client_id'] ?? 0;
+    // Support both legacy and current session key names used across login flows.
+    $clientId = $_SESSION['client_id'] ?? ($_SESSION['user_id'] ?? 0);
     $sessionId = session_id();
     $paymentMethod = 'Paystack - KES (Ref: ' . $reference . ')';
     $fullAddress = $address . "\n\nShipping: " . $shippingMethod;

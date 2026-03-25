@@ -22,6 +22,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="uploads/logo.jpeg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -30,7 +31,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
-    <title><?php echo isset($pageTitle) ? $pageTitle : 'Royals - Quality Sneakers'; ?></title>
+    <title><?php echo isset($pageTitle) ? $pageTitle : 'Royals - Footwear'; ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -817,7 +818,7 @@ header {
 @media (max-width: 480px) {
         header {
         padding: 12px 15px;
-        height: 80px;
+        /* height: 80px; */
     }
     body{
         padding-top: 50px; /* Increase for mobile */
@@ -1092,8 +1093,8 @@ header {
             <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="#" id="mobileCartBtn"><i class="fas fa-shopping-cart"></i> Cart</a></li>
             <li><a href="orders.php"><i class="fas fa-box"></i> My Orders</a></li>
-            <li><a href="about_us.php"><i class="fas fa-info-circle"></i> Shipping Policy</a></li>
-            <li><a href="services.php"><i class="fas fa-concierge-bell"></i> Returning Policy</a></li>
+            <li><a href="https://royals.co.ke/shipping.php"><i class="fas fa-info-circle"></i> Shipping Policy</a></li>
+            <li><a href="https://royals.co.ke/returns.php"><i class="fas fa-concierge-bell"></i> Returning Policy</a></li>
             <?php if ($isLoggedIn): ?>
                 <li><a href="logout.php" style="color: var(--accent);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             <?php else: ?>

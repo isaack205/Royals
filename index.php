@@ -295,6 +295,16 @@ include('header.php');
     .category-filter {
         padding: 8px 10px;
     }
+
+    /* Show full product names on small screens */
+    .product-title {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        word-break: break-word;
+        line-height: 1.3;
+        text-align: center;
+    }
 }
 
 /* New sections styling */
@@ -747,24 +757,24 @@ include('header.php');
                 <a href="?category=men" class="category-filter <?php echo ($categoryFilter == 'men') ? 'active' : ''; ?>">
                     <i class="fas fa-male"></i> Men
                 </a>
-                <a href="?category=women" class="category-filter <?php echo ($categoryFilter == 'women') ? 'active' : ''; ?>">
-                    <i class="fas fa-female"></i> Women
-                </a>
-                <a href="?category=children" class="category-filter <?php echo ($categoryFilter == 'children') ? 'active' : ''; ?>">
-                    <i class="fas fa-child"></i> Children
-                </a>
                 <a href="?category=unisex" class="category-filter <?php echo ($categoryFilter == 'unisex') ? 'active' : ''; ?>">
                     <i class="fas fa-tshirt"></i> Unisex
                 </a>
-                <a href="?category=casual" class="category-filter <?php echo ($categoryFilter == 'casual') ? 'active' : ''; ?>">
+                <a href="?category=women" class="category-filter <?php echo ($categoryFilter == 'women') ? 'active' : ''; ?>">
+                    <i class="fas fa-female"></i> Women
+                </a>
+                <!-- <a href="?category=children" class="category-filter <?php echo ($categoryFilter == 'children') ? 'active' : ''; ?>">
+                    <i class="fas fa-child"></i> Children
+                </a> -->
+                <!-- <a href="?category=casual" class="category-filter <?php echo ($categoryFilter == 'casual') ? 'active' : ''; ?>">
                     <i class="fas fa-tshirt"></i> Casual
                 </a>
                 <a href="?category=formal" class="category-filter <?php echo ($categoryFilter == 'formal') ? 'active' : ''; ?>">
                     <i class="fas fa-suitcase"></i> Formal
-                </a>
-                <a href="?category=sports" class="category-filter <?php echo ($categoryFilter == 'sports') ? 'active' : ''; ?>">
+                </a> -->
+                <!-- <a href="?category=sports" class="category-filter <?php echo ($categoryFilter == 'sports') ? 'active' : ''; ?>">
                     <i class="fas fa-running"></i> Sports
-                </a>
+                </a> -->
                 <!-- <a href="index.php" class="category-filter <?php echo (!$categoryFilter) ? 'active' : ''; ?>">
                     <i class="fas fa-times"></i> Clear Filters
                 </a> -->

@@ -5,6 +5,10 @@ require_once __DIR__ . '/lock_guard.php';
 // $dbname = "if0_38161163_brandx";
 // $username = "if0_38161163";
 // $password = "put your own password i deleted mine for security reasons";
+$host = "127.0.0.1";    // Using '127.0.0.1' is more stable than 'localhost' on some systems
+$dbname = "brandx";     // Make sure this matches the schema name in MySQL Workbench
+$username = "root";     // Default MySQL username
+$password = "Isaac.254"; // Enter the password you set for MySQL Workbench
 
 
 

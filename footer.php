@@ -4,13 +4,16 @@
 footer {
      margin-top: 3rem;
         border-top: 1px solid rgba(0,20,10,0.5);
+}
 
 .footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    /* grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); */
+    align-items: center;
     gap: 2rem;
-    max-width: 1200px;
+    /* max-width: 1200px; */
     margin: 0 auto;
+    flex-direction: column;
     padding-bottom: 2rem;
 }
 
@@ -97,9 +100,9 @@ footer {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .footer-content {
+    /* .footer-content {
         grid-template-columns: 1fr 1fr;
-    }
+    } */
     
     .footer-section {
         margin-bottom: 1rem;
@@ -112,9 +115,9 @@ footer {
 }
 
 @media (max-width: 480px) {
-    .footer-content {
+    /* .footer-content {
         grid-template-columns: 1fr;
-    }
+    } */
     
     footer {
         padding: 2rem 1.5rem 1rem;
@@ -171,7 +174,7 @@ footer {
         
         <div class="copyright">
             Copyrights royals &copy; 2026 | All Rights Reserved <br>
-            Developed and maintained by <a href="https://wa.me/254773743248" target="_blank">Simon Ngugi</a> and <a href="https://wa.me/254742328330" target="_blank">Isaac</a> <a href="https://my-portfolio-ivory-five-28.vercel.app/" target="_blank">Kahura</a>
+            <!-- Developed and maintained by <a href="https://wa.me/254773743248" target="_blank">Simon Ngugi</a> and <a href="https://wa.me/254742328330" target="_blank">Isaac</a> <a href="https://my-portfolio-ivory-five-28.vercel.app/" target="_blank">Kahura</a> -->
 
         </div>
     </footer>
