@@ -1,0 +1,23 @@
+RewriteEngine On
+
+# ── 1. SEO CLEAN URLs (Remove .php extensions) ────────────────────────
+# Remove .php extension from URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Redirect direct .php URL access to clean extensionless URLs
+RewriteCond %{THE_REQUEST} \s/+(.*?/)?(?:index)?(.*?)\.php[\s?] [NC]
+RewriteRule ^ /%1%2 [R=301,L,NE]
+
+
+# ── 2. ANDROID APK DOWNLOAD MIME SUPPORT ─────────────────────────────
+# Ensure APK files are served with the correct MIME type for Android installation
+AddType application/vnd.android.package-archive .apk
+
+# Prevent browsers from caching the APK so users always download the latest version
+<FilesMatch "\.apk$">
+    Header set Content-Disposition "attachment"
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+</FilesMatch>

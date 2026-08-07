@@ -11,7 +11,14 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Fetch admin details (optional, for a personalized dashboard)
+// ── Read current lock state & schedule ───────────────────────────────
+$stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+$settings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+$siteLocked = (isset($settings['site_locked']) && $settings['site_locked'] == '1');
+$unlockAt   = $settings['unlock_at'] ?? '';
+// ─────────────────────────────────────────────────────────────────────
+
 $admin_id = $_SESSION['admin_id'];
 $sql = "SELECT * FROM admins WHERE id = ?";
 if ($stmt = $connection->prepare($sql)) {
@@ -358,10 +365,116 @@ include('adminheader.php');
         .stat-card:nth-child(2) { animation-delay: 0.3s; }
         .stat-card:nth-child(3) { animation-delay: 0.4s; }
         .stat-card:nth-child(4) { animation-delay: 0.5s; }
+        /* Lock Toggle Widget */
+        .lock-widget {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .lock-widget-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .lock-widget-info { display:flex; align-items:center; gap:1rem; }
+        .lock-widget-info i { font-size:2rem; }
+        .lock-widget-info .lock-label { font-size:1.2rem; font-weight:600; }
+        .lock-widget-info .lock-sub   { font-size:.9rem; color:var(--text-secondary); }
+        .lock-actions-btn-group { display:flex; gap:10px; flex-wrap:wrap; }
+        .lock-toggle-btn, .lock-schedule-btn {
+            padding: .75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: all .3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .lock-toggle-btn.locked   { background:var(--danger);  color:#fff; }
+        .lock-toggle-btn.unlocked { background:var(--success); color:#000; }
+        .lock-toggle-btn:hover, .lock-schedule-btn:hover { transform:translateY(-2px); opacity:.9; }
+        .lock-widget-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .lock-schedule-form { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .lock-schedule-input {
+            background: #111;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        .lock-schedule-input:focus { border-color: var(--accent); }
+        .lock-schedule-btn { background: var(--accent); color: #000; }
+        .lock-cancel-btn { background: rgba(255, 71, 87, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+        .lock-cancel-btn:hover { background: var(--danger); color: #fff; }
+        .scheduled-msg { color: var(--warning); font-weight: 500; font-size: 0.95rem; }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
+        <!-- Lock / Unlock Widget -->
+        <div class="lock-widget" id="lockWidget">
+            <!-- Top part: Manual Override status -->
+            <div class="lock-widget-top">
+                <div class="lock-widget-info">
+                    <i class="fas <?= $siteLocked ? 'fa-lock' : 'fa-lock-open' ?>" id="lockIcon"
+                       style="color: <?= $siteLocked ? 'var(--danger)' : 'var(--success)' ?>;"></i>
+                    <div>
+                        <div class="lock-label" id="lockLabel"><?= $siteLocked ? 'Site is LOCKED' : 'Site is OPEN' ?></div>
+                        <div class="lock-sub" id="lockSub"><?= $siteLocked ? 'Customers see the lockscreen' : 'Customers can browse freely' ?></div>
+                    </div>
+                </div>
+                <div class="lock-actions-btn-group">
+                    <button class="lock-toggle-btn <?= $siteLocked ? 'unlocked' : 'locked' ?>" id="lockToggleBtn"
+                            onclick="confirmToggleSiteLock(<?= $siteLocked ? 'false' : 'true' ?>)">
+                        <i class="fas <?= $siteLocked ? 'fa-lock-open' : 'fa-lock' ?>"></i>
+                        <?= $siteLocked ? 'Open Site Now' : 'Lock Site Now' ?>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom part: Scheduled Release -->
+            <div class="lock-widget-bottom">
+                <div class="lock-schedule-form" id="scheduleFormArea" style="display: <?= !empty($unlockAt) ? 'none' : 'flex' ?>;">
+                    <label for="unlockDatetime" style="font-size:0.9rem; font-weight:500;">Schedule Auto-Unlock:</label>
+                    <input type="datetime-local" id="unlockDatetime" class="lock-schedule-input">
+                    <button class="lock-schedule-btn" onclick="confirmScheduleUnlock()">
+                        <i class="fas fa-calendar-alt"></i> Set Schedule
+                    </button>
+                </div>
+                
+                <div id="scheduleActiveArea" style="display: <?= !empty($unlockAt) ? 'flex' : 'none' ?>; width:100%; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div class="scheduled-msg" id="scheduledMsg">
+                        <i class="fas fa-clock"></i> Scheduled to open at: <strong id="scheduledTimeText"><?= !empty($unlockAt) ? date('M j, Y g:i A', strtotime($unlockAt)) : '' ?></strong>
+                        <span id="adminCountdown" style="display:block; font-size:0.85rem; margin-top:2px; font-weight:normal;"></span>
+                    </div>
+                    <button class="lock-toggle-btn lock-cancel-btn" onclick="confirmCancelSchedule()">
+                        <i class="fas fa-ban"></i> Cancel Schedule
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Welcome Message -->
         <div class="welcome-message">
             <h2><i class="fas fa-user-shield"></i> Welcome, <?php echo htmlspecialchars($admin['username']); ?>!</h2>
@@ -378,6 +491,7 @@ include('adminheader.php');
             <a href="admin_products.php"><i class="fas fa-boxes"></i> Product Management</a>
             <a href="upload_ads.php"><i class="fas fa-ad"></i> Ads</a>
             <a href="registeredusers.php"><i class="fas fa-users"></i> Customers</a>
+            <a href="admin_mailing_list.php"><i class="fas fa-envelope-open-text"></i> Mailing List</a>
         </div>
 
         <!-- Stats Cards -->
@@ -454,10 +568,20 @@ include('adminheader.php');
             <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </form>
     </div>
+
+    <script>
+    // Initialize the scheduler countdown on page load if a target exists
+    <?php if (!empty($unlockAt)): ?>
+    window.addEventListener('DOMContentLoaded', () => {
+        if (typeof initCountdown === 'function') {
+            initCountdown("<?= $unlockAt ?>");
+        }
+    });
+    <?php endif; ?>
+    </script>
 </body>
 </html>
 
 <?php
-// Close the database connection
 $connection->close();
 ?>

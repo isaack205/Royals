@@ -66,8 +66,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
                     setcookie('remember_token', $token, time() + 30 * 24 * 60 * 60, '/');
                 }
                 
-                // Redirect to home page
-                header("Location: index.php");
+                // Redirect after login (preserve redirect from GET or POST)
+                $redirectTarget = $_GET['redirect'] ?? $_POST['redirect'] ?? null;
+                if ($redirectTarget === 'orders.php') {
+                    header("Location: orders.php");
+                } else {
+                    header("Location: index.php");
+                }
                 exit();
             } else {
                 $errors['login'] = "Invalid email or password";
@@ -592,6 +597,9 @@ h2 {
                     <?php endif; ?>
                     
                     <form action="login.php" method="POST">
+<?php if (isset($_GET['redirect'])): ?>
+    <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_GET['redirect']); ?>">
+<?php endif; ?>
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>

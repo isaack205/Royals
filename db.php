@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/lock_guard.php';
 
+// Sync timezone with user's computer EAT (UTC+3) timezone
+date_default_timezone_set('Africa/Nairobi');
+
 // $host = "sql103.infinityfree.com";
 // $dbname = "if0_38161163_brandx";
 // $username = "if0_38161163";

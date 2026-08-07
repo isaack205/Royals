@@ -343,21 +343,19 @@ img {
         
         /* Mobile Size Guide Button */
         .size-guide-mobile-btn {
-            display: none;
-            background: linear-gradient(135deg, var(--product-accent), #007acc);
+            background: none;
             color: white;
+            text-decoration: underline;
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
+            font-size: 1.2rem;
+            display: none;
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0,210,255,0.3);
             transition: all 0.3s ease;
             align-self: flex-end;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         
         .size-guide-mobile-btn:active {
@@ -562,6 +560,19 @@ img {
             margin-bottom: 2rem;
         }
 
+        .product-description-panel {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0;
+            scroll-margin-top: 90px;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+        }
+
+        .product-description-panel.active {
+            max-height: 1000px;
+            padding: 0 0 1rem;
+        }
+
         .details-toggle2 {
             background: none;
             color: var(--product-accent);
@@ -609,7 +620,7 @@ img {
         /* Custom Selectors */
         .custom-select {
             position: relative;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .select-header {
@@ -621,6 +632,14 @@ img {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .select-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .custom-select.select-open .select-header i {
+            transform: rotate(180deg);
         }
 
         /* Make size selector box visibly selected once a size is chosen */
@@ -645,11 +664,14 @@ img {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            max-height: 200px;
+            max-height: 0;
             overflow-y: auto;
             z-index: 10;
-            display: none;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: max-height 0.5s ease, opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .select-option {
@@ -668,7 +690,10 @@ img {
         }
 
         .select-open .select-options {
-            display: block;
+            max-height: 200px;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         /* Quantity Control */
@@ -1189,8 +1214,7 @@ img {
             }
 
             .thumbnail {
-                flex: 0 0 64px;
-                width: 64px;
+                width: 100%;
                 height: 64px;
             }
 
@@ -1237,7 +1261,9 @@ img {
             .custom-notification {
                 width: calc(100% - 24px);
                 max-width: none;
-                top: 84px;
+                top: auto;
+                bottom: 16px;
+                padding: 12px 16px;
             }
         }
 
@@ -1456,15 +1482,15 @@ img {
             <div class="product-grid">
                 <!-- Product Gallery -->
                 <div class="product-gallery">
-                    <div class="main-image-container" id="mainImageContainer">
+                    <div class="main-image-container" id="mainImageContainer" onclick="openZoomModal()" style="cursor: zoom-in;">
                         <img id="mainImage" src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image">
-                        <button class="image-nav-btn prev-btn" id="prevBtn" onclick="navigateImage(-1)">
+                        <button class="image-nav-btn prev-btn" id="prevBtn" onclick="event.stopPropagation(); navigateImage(-1)">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <button class="image-nav-btn next-btn" id="nextBtn" onclick="navigateImage(1)">
+                        <button class="image-nav-btn next-btn" id="nextBtn" onclick="event.stopPropagation(); navigateImage(1)">
                             <i class="fas fa-chevron-right"></i>
                         </button>
-                        <button class="zoom-btn" id="zoomBtn" onclick="openZoomModal()">
+                        <button class="zoom-btn" id="zoomBtn" onclick="event.stopPropagation(); openZoomModal()">
                             <i class="fas fa-search-plus"></i>
                         </button>
                     </div>
@@ -1518,7 +1544,7 @@ img {
                         </div>
                     </div>
                     
-                    <div id="productDescription" style="display: none;">
+                    <div id="productDescription" class="product-description-panel">
                         <h3 class="title-product">Product details</h3>
                         <p class="product-description"><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
                         <div class="details-toggle2" id="detailsToggle2">
@@ -1585,7 +1611,7 @@ img {
                         
                         <!-- Mobile Size Guide Button (appears between color and size on mobile) -->
                         <button class="size-guide-mobile-btn" onclick="openSizeGuideModal()">
-                            <i class="fas fa-ruler"></i> Size Guide
+                            Size Guide
                         </button>
                         
                         <!-- Size Selection -->
@@ -1607,7 +1633,6 @@ img {
                         
                         <!-- Quantity Selection -->
                         <div class="quantity-control">
-                            <span>Quantity:</span>
                             <button class="quantity-btn quantity-decrease">-</button>
                             <span class="quantity-value">1</span>
                             <button class="quantity-btn quantity-increase">+</button>
@@ -1955,34 +1980,29 @@ img {
             const price = document.querySelector(".price-stock");
             const toggle = document.querySelector(".details-toggle");
             const like = document.getElementById('favoriteBtn');
-            // const detailsBtn = document.querySelector(".shipping-toggle");
-            // const detailsBtn2 = document.querySelector(".return-toggle");
             const category = document.querySelector(".product-category");
+            const isOpen = description.classList.contains('active');
 
-            if (description.style.display === 'none') {
+            if (!isOpen) {
                 if (title) title.style.display = 'none';
                 if (price) price.style.display = 'none';
                 if (toggle) toggle.style.display = 'none';
                 if (like) like.style.display = 'none';
-                // detailsBtn.style.display = 'none';
-                // detailsBtn2.style.display = 'none';
                 if (category) category.style.display = 'none';
-                description.style.display = 'block';
-                actions.classList.add('hidden');
-                // toggleBtn.innerHTML = '<span>Hide Details</span><i class="fas fa-chevron-up"></i>';
+                description.classList.add('active');
+                if (actions) actions.classList.add('hidden');
                 toggleBtn.classList.add('active');
+                setTimeout(() => {
+                    description.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 150);
             } else {
                 if (title) title.style.display = 'block';
-                if (price) price.style.display = 'block';
-                if (toggle) toggle.style.display = 'block';
+                if (price) price.style.display = 'flex';
+                if (toggle) toggle.style.display = 'flex';
                 if (like) like.style.display = 'block';
-                // restore the other policy buttons when details are closed
-                // detailsBtn.style.display = 'flex';
-                // detailsBtn2.style.display = 'flex';
                 if (category) category.style.display = 'block';
-                description.style.display = 'none';
-                actions.classList.remove('hidden');
-                // toggleBtn.innerHTML = '<span>See Details</span><i class="fas fa-chevron-down"></i>';
+                description.classList.remove('active');
+                if (actions) actions.classList.remove('hidden');
                 toggleBtn.classList.remove('active');
             }
         }
@@ -2092,7 +2112,16 @@ img {
         
         // Toggle select dropdown
         function toggleSelect(selectId) {
-            document.getElementById(selectId).classList.toggle('select-open');
+            const currentSelect = document.getElementById(selectId);
+            const isOpen = currentSelect.classList.contains('select-open');
+
+            document.querySelectorAll('.custom-select').forEach(select => {
+                select.classList.remove('select-open');
+            });
+
+            if (!isOpen) {
+                currentSelect.classList.add('select-open');
+            }
         }
         
         // Select option from dropdown
@@ -2166,7 +2195,7 @@ img {
             
             setTimeout(() => {
                 customNotification.classList.remove('active');
-            }, 3000);
+            }, 1600);
         }
         
         // Add to cart function

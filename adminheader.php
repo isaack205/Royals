@@ -1,4 +1,5 @@
 <?php require_once __DIR__ . '/lock_guard.php'; ?>
+<?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -339,7 +340,7 @@
                 <span>Main</span>
             </li>
             <li>
-                <a href="admin_dashboard.php" class="menu-item active">
+                <a href="admin_dashboard.php" class="menu-item <?php echo $currentPage == 'admin_dashboard.php' ? 'active' : ''; ?>">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
@@ -350,19 +351,19 @@
                 <span>Products</span>
             </li>
             <li>
-                <a href="admin_products.php" class="menu-item">
+                <a href="admin_products.php" class="menu-item <?php echo $currentPage == 'admin_products.php' ? 'active' : ''; ?>">
                     <i class="fas fa-box"></i>
                     <span>All Products</span>
                 </a>
             </li>
             <li>
-                <a href="add_product.php" class="menu-item">
+                <a href="add_product.php" class="menu-item <?php echo $currentPage == 'add_product.php' ? 'active' : ''; ?>">
                     <i class="fas fa-plus"></i>
                     <span>Add New Product</span>
                 </a>
             </li>
             <li>
-                <a href="featured_products.php" class="menu-item">
+                <a href="featured_products.php" class="menu-item <?php echo $currentPage == 'featured_products.php' ? 'active' : ''; ?>">
                     <i class="fas fa-star"></i>
                     <span>Featured Products</span>
                 </a>
@@ -373,13 +374,13 @@
                 <span>Orders</span>
             </li>
             <li>
-                <a href="orders.php" class="menu-item">
+                <a href="orders_made.php" class="menu-item <?php echo $currentPage == 'orders_made.php' ? 'active' : ''; ?>">
                     <i class="fas fa-list"></i>
                     <span>View Orders</span>
                 </a>
             </li>
             <li>
-                <a href="pending_orders.php" class="menu-item">
+                <a href="pending_orders.php" class="menu-item <?php echo $currentPage == 'pending_orders.php' ? 'active' : ''; ?>">
                     <i class="fas fa-clock"></i>
                     <span>Pending Orders</span>
                 </a>
@@ -390,13 +391,13 @@
                 <span>Users</span>
             </li>
             <li>
-                <a href="users.php" class="menu-item">
+                <a href="users.php" class="menu-item <?php echo $currentPage == 'users.php' ? 'active' : ''; ?>">
                     <i class="fas fa-user-friends"></i>
                     <span>Manage Users</span>
                 </a>
             </li>
             <li>
-                <a href="clients.php" class="menu-item">
+                <a href="clients.php" class="menu-item <?php echo $currentPage == 'clients.php' ? 'active' : ''; ?>">
                     <i class="fas fa-address-card"></i>
                     <span>Clients</span>
                 </a>
@@ -407,7 +408,7 @@
                 <span>Messages</span>
             </li>
             <li>
-                <a href="messages.php" class="menu-item">
+                <a href="messages.php" class="menu-item <?php echo $currentPage == 'messages.php' ? 'active' : ''; ?>">
                     <i class="fas fa-inbox"></i>
                     <span>Inbox</span>
                 </a>
@@ -418,13 +419,13 @@
                 <span>Settings</span>
             </li>
             <li>
-                <a href="settings.php" class="menu-item">
+                <a href="settings.php" class="menu-item <?php echo $currentPage == 'settings.php' ? 'active' : ''; ?>">
                     <i class="fas fa-sliders-h"></i>
                     <span>Site Settings</span>
                 </a>
             </li>
             <li>
-                <a href="logout.php" class="menu-item">
+                <a href="logout.php" class="menu-item <?php echo $currentPage == 'logout.php' ? 'active' : ''; ?>">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -494,6 +495,188 @@
                 }
             });
         });
+
+        // ── Site Lock Controls (used by admin_dashboard.php) ─────────
+        let countdownInterval = null;
+
+        function initCountdown(targetStr) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            const countdownSpan = document.getElementById('adminCountdown');
+            if (!targetStr || !countdownSpan) {
+                if (countdownSpan) countdownSpan.textContent = '';
+                return;
+            }
+
+            const targetTime = new Date(targetStr.replace(/-/g, "/")).getTime();
+
+            function update() {
+                const now = Date.now();
+                const diff = targetTime - now;
+
+                if (diff <= 0) {
+                    countdownSpan.innerHTML = '<span style="color:var(--success); font-weight:bold;">Launch time reached! Reloading status...</span>';
+                    clearInterval(countdownInterval);
+                    setTimeout(() => window.location.reload(), 2000);
+                    return;
+                }
+
+                const totalSeconds = Math.floor(diff / 1000);
+                const days = Math.floor(totalSeconds / 86400);
+                const hours = Math.floor((totalSeconds % 86400) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                countdownSpan.textContent = `Time remaining: ${days}d ${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+            }
+
+            update();
+            countdownInterval = setInterval(update, 1000);
+        }
+
+        async function confirmToggleSiteLock(shouldLock) {
+            const actionWord = shouldLock ? 'LOCK' : 'OPEN/UNLOCK';
+            const detailMsg = shouldLock 
+                ? 'This will immediately redirect all active customers to the lockscreen.' 
+                : 'This will immediately open the store to all customers.';
+
+            if (!confirm(`⚠️ Are you sure you want to ${actionWord} the website?\n\n${detailMsg}`)) {
+                return;
+            }
+
+            const btn   = document.getElementById('lockToggleBtn');
+            const icon  = document.getElementById('lockIcon');
+            const label = document.getElementById('lockLabel');
+            const sub   = document.getElementById('lockSub');
+            const action = shouldLock ? 'lock' : 'unlock';
+
+            if (!btn) return;
+
+            btn.disabled = true;
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                const fd = new FormData();
+                fd.append('action', action);
+                const res = await fetch('ajax/toggle_lock.php', { method: 'POST', body: fd });
+                const data = await res.json();
+
+                if (data.success) {
+                    if (data.locked) {
+                        btn.className = 'lock-toggle-btn unlocked';
+                        btn.innerHTML = '<i class="fas fa-lock-open"></i> Open Site Now';
+                        btn.setAttribute('onclick', 'confirmToggleSiteLock(false)');
+                        icon.className = 'fas fa-lock';
+                        icon.style.color = 'var(--danger)';
+                        label.textContent = 'Site is LOCKED';
+                        sub.textContent   = 'Customers see the lockscreen';
+                    } else {
+                        btn.className = 'lock-toggle-btn locked';
+                        btn.innerHTML = '<i class="fas fa-lock"></i> Lock Site Now';
+                        btn.setAttribute('onclick', 'confirmToggleSiteLock(true)');
+                        icon.className = 'fas fa-lock-open';
+                        icon.style.color = 'var(--success)';
+                        label.textContent = 'Site is OPEN';
+                        sub.textContent   = 'Customers can browse freely';
+                    }
+
+                    document.getElementById('scheduleActiveArea').style.display = 'none';
+                    document.getElementById('scheduleFormArea').style.display = 'flex';
+                    document.getElementById('unlockDatetime').value = '';
+                    if (countdownInterval) clearInterval(countdownInterval);
+                    document.getElementById('adminCountdown').textContent = '';
+                } else {
+                    alert('Error: ' + data.message);
+                    btn.innerHTML = originalHtml;
+                }
+            } catch (e) {
+                alert('Network error. Please try again.');
+                btn.innerHTML = originalHtml;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function confirmScheduleUnlock() {
+            const input = document.getElementById('unlockDatetime');
+            const datetimeVal = input ? input.value : '';
+
+            if (!datetimeVal) {
+                alert('Please select a release date and time.');
+                return;
+            }
+
+            const targetDate = new Date(datetimeVal);
+            if (targetDate <= new Date()) {
+                alert('Scheduled date & time must be in the future.');
+                return;
+            }
+
+            const dateFormatted = targetDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+            if (!confirm(`🗓️ Schedule site launch?\n\nThe website will automatically unlock and go live on:\n👉 ${dateFormatted}\n\nThe website will remain locked until then.`)) {
+                return;
+            }
+
+            try {
+                const fd = new FormData();
+                fd.append('action', 'schedule');
+                fd.append('datetime', datetimeVal);
+                const res = await fetch('ajax/toggle_lock.php', { method: 'POST', body: fd });
+                const data = await res.json();
+
+                if (data.success) {
+                    const btn   = document.getElementById('lockToggleBtn');
+                    const icon  = document.getElementById('lockIcon');
+                    const label = document.getElementById('lockLabel');
+                    const sub   = document.getElementById('lockSub');
+
+                    btn.className = 'lock-toggle-btn unlocked';
+                    btn.innerHTML = '<i class="fas fa-lock-open"></i> Open Site Now';
+                    btn.setAttribute('onclick', 'confirmToggleSiteLock(false)');
+                    icon.className = 'fas fa-lock';
+                    icon.style.color = 'var(--danger)';
+                    label.textContent = 'Site is LOCKED';
+                    sub.textContent   = 'Customers see the lockscreen';
+
+                    document.getElementById('scheduleFormArea').style.display = 'none';
+                    document.getElementById('scheduleActiveArea').style.display = 'flex';
+                    document.getElementById('scheduledTimeText').textContent = dateFormatted;
+                    
+                    initCountdown(data.unlock_at);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                alert('Network error. Please try again.');
+            }
+        }
+
+        async function confirmCancelSchedule() {
+            if (!confirm('🛑 Are you sure you want to cancel the scheduled unlock?\n\nThe site will remain locked until you manually open it.')) {
+                return;
+            }
+
+            try {
+                const fd = new FormData();
+                fd.append('action', 'cancel_schedule');
+                const res = await fetch('ajax/toggle_lock.php', { method: 'POST', body: fd });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('scheduleActiveArea').style.display = 'none';
+                    document.getElementById('scheduleFormArea').style.display = 'flex';
+                    document.getElementById('unlockDatetime').value = '';
+                    if (countdownInterval) clearInterval(countdownInterval);
+                    document.getElementById('adminCountdown').textContent = '';
+                    alert(data.message);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (e) {
+                alert('Network error. Please try again.');
+            }
+        }
+        // ─────────────────────────────────────────────────────────────
     </script>
 </body>
 </html>

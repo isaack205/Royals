@@ -3,11 +3,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$unlockPassword = 'Royals2026';
-$unlockError = '';
-$unlockSuccess = '';
+date_default_timezone_set('Africa/Nairobi');
+
+require_once __DIR__ . '/db.php';
+
 $newsletterMessage = '';
-$newsletterError = '';
+$newsletterError  = '';
 
 if (!isset($_SESSION['site_unlocked'])) {
     $_SESSION['site_unlocked'] = false;
@@ -18,31 +19,33 @@ if (!is_string($redirectPath) || strpos($redirectPath, 'http://') === 0 || strpo
     $redirectPath = 'index.php';
 }
 
-$year = (int)date('Y');
-$month = (int)date('n');
-$targetEpoch = mktime(23, 59, 59, $month, 14, $year);
-$targetTimestamp = $targetEpoch * 1000;
+// ── Read lock state from DB ──────────────────────────────────────────
+$stmt = $pdo->query("SELECT setting_key, setting_value FROM site_settings");
+$settings = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-// After the countdown deadline, keep the site open without requiring password unlock.
-if (time() > $targetEpoch) {
+$siteLocked = (isset($settings['site_locked']) && $settings['site_locked'] == '1');
+$unlockAt   = $settings['unlock_at'] ?? '';
+
+// If site is unlocked in DB, grant access immediately
+if (!$siteLocked) {
     $_SESSION['site_unlocked'] = true;
     header('Location: ' . $redirectPath);
     exit;
 }
 
+// Auto-check on load if scheduled unlock time has passed
+if (!empty($unlockAt) && time() >= strtotime($unlockAt)) {
+    $pdo->prepare("UPDATE site_settings SET setting_value = '0' WHERE setting_key = 'site_locked'")->execute();
+    $pdo->prepare("UPDATE site_settings SET setting_value = '' WHERE setting_key = 'unlock_at'")->execute();
+    $_SESSION['site_unlocked'] = true;
+    header('Location: ' . $redirectPath);
+    exit;
+}
+
+// ────────────────────────────────────────────────────────────────────
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $formType = $_POST['form_type'] ?? '';
-
-    if ($formType === 'unlock') {
-        $enteredPassword = trim($_POST['site_password'] ?? '');
-        if ($enteredPassword === $unlockPassword) {
-            $_SESSION['site_unlocked'] = true;
-            $unlockSuccess = 'Website unlocked successfully.';
-            header('Location: ' . $redirectPath);
-            exit;
-        }
-        $unlockError = 'Incorrect password. Please try again.';
-    }
 
     if ($formType === 'newsletter') {
         $newsletterEmail = trim($_POST['newsletter_email'] ?? '');
@@ -51,14 +54,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!filter_var($newsletterEmail, FILTER_VALIDATE_EMAIL)) {
             $newsletterError = 'Please enter a valid email address.';
         } else {
-            $newsletterFile = __DIR__ . '/newsletter_signups.txt';
-            $entry = date('Y-m-d H:i:s') . ' | ' . $newsletterEmail . PHP_EOL;
-            @file_put_contents($newsletterFile, $entry, FILE_APPEND | LOCK_EX);
-            $newsletterMessage = 'Thanks. You have been added to the newsletter list.';
+            try {
+                $ins = $pdo->prepare("INSERT IGNORE INTO mailing_list (email, source) VALUES (?, 'lockscreen')");
+                $ins->execute([$newsletterEmail]);
+                $newsletterMessage = 'Thanks! You\'ll be the first to know when we drop.';
+            } catch (PDOException $e) {
+                $newsletterError = 'Something went wrong. Please try again.';
+            }
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -298,29 +305,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p class="message success"><?php echo htmlspecialchars($newsletterMessage); ?></p>
                     <?php endif; ?>
                 </form>
-            </div>
-        </div>
-
-        <!-- Bottom Section: Password Unlock -->
-        <div class="lock-section-bottom">
-            <form method="POST" action="lock.php?redirect=<?php echo urlencode($redirectPath); ?>" style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="hidden" name="form_type" value="unlock">
-                <label for="site_password">Are you the store owner?</label>
-                <div class="input-wrapper">
-                    <input id="site_password" name="site_password" type="password" placeholder="password" required>
-                    <button type="submit" class="input-arrow" title="Unlock" aria-label="Unlock">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                <?php if ($unlockError !== ''): ?>
-                    <p class="message error"><?php echo htmlspecialchars($unlockError); ?></p>
-                <?php endif; ?>
-                <?php if ($unlockSuccess !== ''): ?>
-                    <p class="message success"><?php echo htmlspecialchars($unlockSuccess); ?></p>
-                <?php endif; ?>
-            </form>
-        </div>
-
         <p style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
             <a href="mailto:info@royals.co.ke" style="color: var(--accent); text-decoration: none;"><i class="fas fa-envelope"></i></a>
         </p>
@@ -329,14 +313,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         (function () {
             const countdownEl = document.getElementById('countdown');
-            const target = <?php echo (int)$targetTimestamp; ?>;
+            const targetTime  = <?= !empty($unlockAt) ? strtotime($unlockAt) * 1000 : 0 ?>;
+
+            if (targetTime === 0) {
+                countdownEl.textContent = 'Opening Soon';
+                return;
+            }
 
             function updateCountdown() {
                 const now = Date.now();
-                const diff = target - now;
+                const diff = targetTime - now;
 
                 if (diff <= 0) {
-                    countdownEl.textContent = 'Countdown complete for the 14th.';
+                    countdownEl.textContent = 'Launching now...';
+                    // Reload to unlock page automatically
+                    setTimeout(() => { window.location.reload(); }, 1500);
                     return;
                 }
 
@@ -359,3 +350,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </body>
 </html>
+

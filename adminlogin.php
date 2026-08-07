@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - BrandX</title>
+    <title>Admin Login - Royals</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-container">
         <div class="logo">
             <a href="home.php">
-                <img src="uploads/brandxlogo.png" alt="BrandX Logo">
+                <img src="uploads/logo.jpeg" alt="Royals Logo">
             </a>
         </div>
         <h2>Admin Login</h2>

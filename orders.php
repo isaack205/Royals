@@ -29,6 +29,13 @@ include('header.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders - Royals</title>
     <style>
+    /* Fixed position for Print Orders button */
+    .print-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
         :root {
             --primary: #00d2ff;
             --secondary: #3a7bd5;
@@ -478,9 +485,7 @@ include('header.php');
                 <i class="fas fa-shopping-bag"></i>
                 My Orders
             </h1>
-            <button onclick="window.print()" class="action-btn btn-secondary">
-                <i class="fas fa-print"></i> Print Orders
-            </button>
+            
         </div>
 
         <div class="orders-filter">
@@ -491,6 +496,10 @@ include('header.php');
             <button class="filter-btn" data-filter="delivered">Delivered</button>
             <button class="filter-btn" data-filter="cancelled">Cancelled</button>
         </div>
+
+        <!-- <button onclick="window.print()" class="action-btn btn-secondary">
+            <i class="fas fa-print"></i> Print Orders
+        </button> -->
 
         <div class="orders-list">
             <?php if ($orders_result->num_rows > 0): ?>
@@ -621,6 +630,9 @@ include('header.php');
             <?php endif; ?>
         </div>
     </div>
+    <button onclick="window.print()" class="action-btn btn-secondary print-btn">
+        <i class="fas fa-print"></i> Print Orders
+    </button>
 
     <script>
         // Filter orders by status

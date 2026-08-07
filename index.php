@@ -164,12 +164,34 @@ include('header.php');
 
 .product-image {
     position: relative;
+    overflow: hidden;
 }
 
 .product-image img {
     width: 100%;
     height: 300px;
     object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.product-image .hover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.06);
+}
+
+.product-card:hover .product-image .hover-img {
+    opacity: 1;
 }
 
 .discount-badge {
@@ -729,7 +751,14 @@ include('header.php');
                     <div class="product-card">
                         <a href="product.php?id=<?php echo $row['id']; ?>" class="product-link"></a>
                         <div class="product-image">
-                            <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" loading="lazy">
+                            <?php 
+                            $secondary = json_decode($row['secondary_image'] ?? '[]', true) ?: [];
+                            $last_image = !empty($secondary) ? end($secondary) : '';
+                            ?>
+                            <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" class="main-img" loading="lazy">
+                            <?php if (!empty($last_image)): ?>
+                                <img src="uploads/<?php echo htmlspecialchars($last_image); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>" class="hover-img" loading="lazy">
+                            <?php endif; ?>
                         </div>
                         <div class="product-details">
                             <h3 class="product-title"><?php echo htmlspecialchars($row['name']); ?></h3>
@@ -995,7 +1024,14 @@ function quickView(productId) {
                     <div class="product-card">
                         <a href="product.php?id=<?php echo $product['id']; ?>" class="product-link"></a>
                         <div class="product-image">
-                            <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" loading="lazy">
+                            <?php 
+                            $secondary = json_decode($product['secondary_image'] ?? '[]', true) ?: [];
+                            $last_image = !empty($secondary) ? end($secondary) : '';
+                            ?>
+                            <img src="uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-img" loading="lazy">
+                            <?php if (!empty($last_image)): ?>
+                                <img src="uploads/<?php echo htmlspecialchars($last_image); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="hover-img" loading="lazy">
+                            <?php endif; ?>
                             <!-- <div class="product-hover-actions">
                                 <button class="quickview-button" onclick="event.stopPropagation(); quickView(<?php echo $product['id']; ?>)">
                                     <i class="fas fa-eye"></i>

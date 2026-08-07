@@ -78,27 +78,23 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-header {
+header.main-header {
     height: 70px;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: black;
+    background: #000000;
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    padding: 15px 25px;
-    transition: all 0.3s ease;
-}
-
-.main-header {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+    padding: 0 25px;
     display: flex;
-    justify-content: space-between; /* Pushes items to the edges */
+    justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
     width: 100%;
     box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
 .main-header i {
@@ -119,6 +115,7 @@ header {
 
 .header-center {
     justify-content: center;     /* Forces the logo to be perfectly centered */
+    align-items: center;
 }
 
 .header-right {
@@ -202,6 +199,7 @@ header {
     }
     .main-header {
         display: flex;
+        height: 50px;
         padding: 10px 10px;
     }
 }
@@ -275,10 +273,10 @@ header {
 
 .logo img {
     height: 50px;
-    width: auto;
-    border-radius: 102px;
+    width: 50px;
+    object-fit: cover;
     transition: transform 0.3s ease;
-
+    mix-blend-mode: screen;
 }
 
 .logo:hover img {
@@ -802,8 +800,8 @@ header {
     }
     
     .logo img {
-        height: 70px;
-       width:150px;
+        height: 50px;
+        width: 50px;
     }
  
     .back-to-top {
@@ -834,8 +832,8 @@ header {
     }
     
     .logo img {
-        height: 36px;
-        width: 60px;
+        height: 38px;
+        width: 38px;
     }
     
     .search-bar {
@@ -1093,14 +1091,16 @@ header {
             <li><a href="index.php"><i class="fas fa-home"></i> Home</a></li>
             <li><a href="#" id="mobileCartBtn"><i class="fas fa-shopping-cart"></i> Cart</a></li>
             <li><a href="orders.php"><i class="fas fa-box"></i> My Orders</a></li>
-            <li><a href="https://royals.co.ke/shipping.php"><i class="fas fa-info-circle"></i> Shipping Policy</a></li>
-            <li><a href="https://royals.co.ke/returns.php"><i class="fas fa-concierge-bell"></i> Returning Policy</a></li>
+            <li><a href="shipping.php"><i class="fas fa-info-circle"></i> Shipping Policy</a></li>
+            <li><a href="returns.php"><i class="fas fa-concierge-bell"></i> Return Policy</a></li>
             <?php if ($isLoggedIn): ?>
                 <li><a href="logout.php" style="color: var(--accent);"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             <?php else: ?>
                 <li><a href="login.php" style="color: #4ea8de;"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             <?php endif; ?>
-            <li><a href="admin_dashboard.php" style="color: skyblue;"><i class="fas fa-user-shield"></i> Admin</a></li>
+            <?php if (isset($_SESSION['admin_id'])): ?>
+                <li><a href="admin_dashboard.php" style="color: skyblue;"><i class="fas fa-user-shield"></i> Admin</a></li>
+            <?php endif; ?>
         </ul>
     </div>
     
@@ -1340,7 +1340,7 @@ function fetchSearchSuggestions(query) {
                 });
                 suggestionsContainer.innerHTML = html;
             } else {
-                suggestionsContainer.innerHTML = '<div class="no-results">No products found</div>';
+                suggestionsContainer.innerHTML = '<div class="no-results">No products found <button>Request This Shoe</button></div>';
             }
         })
         .catch(error => {
