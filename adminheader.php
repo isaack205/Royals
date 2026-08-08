@@ -450,24 +450,24 @@
             // Set initial state based on screen size
             if (isLargeScreen) {
                 // On large screens, sidebar is expanded by default
-                sidebar.classList.remove('collapsed');
-                mainContent.classList.remove('expanded');
+                sidebar?.classList.remove('collapsed');
+                mainContent?.classList.remove('expanded');
             } else {
                 // On small screens, sidebar is hidden by default
-                sidebar.classList.remove('active');
+                sidebar?.classList.remove('active');
             }
             
             // Toggle sidebar on hamburger click
-            hamburger.addEventListener('click', function() {
+            hamburger?.addEventListener('click', function() {
                 if (isLargeScreen) {
                     // On large screens, toggle between expanded and collapsed
                     this.classList.toggle('active');
-                    sidebar.classList.toggle('collapsed');
-                    mainContent.classList.toggle('expanded');
+                    sidebar?.classList.toggle('collapsed');
+                    mainContent?.classList.toggle('expanded');
                 } else {
                     // On small screens, toggle visibility
                     this.classList.toggle('active');
-                    sidebar.classList.toggle('active');
+                    sidebar?.classList.toggle('active');
                 }
             });
             

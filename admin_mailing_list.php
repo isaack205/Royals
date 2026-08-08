@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_blast'])) {
         $sent = 0;
         $failed = 0;
 
+        $errors = [];
         foreach ($recipients as $email) {
             try {
                 $mail = createMailer();
@@ -47,9 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_blast'])) {
                 $sent++;
             } catch (Exception $e) {
                 $failed++;
+                $errMsg = "[Royals Mailer] Failed to send to $email: " . $mail->ErrorInfo;
+                error_log($errMsg);
+                $errors[] = $errMsg;
             }
         }
-        $_SESSION['mail_msg'] = "Sent to $sent recipient(s)." . ($failed > 0 ? " $failed failed." : '');
+        $errDetail = !empty($errors) ? ' Error: ' . implode('; ', $errors) : '';
+        $_SESSION['mail_msg'] = "Sent to $sent recipient(s)." . ($failed > 0 ? " $failed failed.$errDetail" : '');
         $_SESSION['mail_msg_type'] = ($failed === 0) ? 'success' : 'warning';
     }
     header('Location: admin_mailing_list.php');
@@ -154,9 +159,10 @@ include('adminheader.php');
     <div class="card">
         <h3><i class="fas fa-paper-plane"></i> Send Email Blast</h3>
         <form method="POST" id="emailBlastForm" onsubmit="handleEmailSubmit(event)">
+            <input type="hidden" name="send_blast" value="1">
             <input type="text" name="subject" placeholder="Email subject..." required>
             <textarea name="body" placeholder="Write your message here...&#10;&#10;It will be styled automatically with Royals branding." required></textarea>
-            <button type="submit" name="send_blast" id="submitBlastBtn" class="btn btn-accent">
+            <button type="submit" id="submitBlastBtn" class="btn btn-accent">
                 <i class="fas fa-paper-plane"></i> Send to All <?= count($subscribers) ?> Subscribers
             </button>
         </form>

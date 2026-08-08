@@ -31,10 +31,16 @@ if (!$isWhitelistedPage) {
 
     // Always check the DB lock state — this ensures locking from admin
     // takes immediate effect for ALL visitors, not just new sessions.
+
     $lockCheckHost = '127.0.0.1';
     $lockCheckDb   = 'brandx';
     $lockCheckUser = 'root';
     $lockCheckPass = 'Isaac.254';
+
+    // $lockCheckHost = 'localhost';
+    // $lockCheckDb   = 'royalsco_brandx';
+    // $lockCheckUser = 'royalsco_dbuser';
+    // $lockCheckPass = 'Admin@royals';
 
     $siteLocked = false;
     try {
